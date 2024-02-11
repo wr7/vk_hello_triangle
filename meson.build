@@ -5,7 +5,12 @@ project('vulkanhello', 'c',
 vulkan = dependency('vulkan')
 glfw3 = dependency('glfw3')
 
-exe = executable('vulkanhello', 'src/main.c',
+project_source_files = [
+  'src/main.c',
+  'src/main_window.c'
+]
+
+exe = executable('vulkanhello', project_source_files,
   install : false, dependencies : [vulkan, glfw3])
 
 test('basic', exe)
