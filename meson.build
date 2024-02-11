@@ -7,6 +7,7 @@ glfw3 = dependency('glfw3')
 
 project_source_files = [
   'src/main.c',
+  'src/util.c',
   'src/main_window.c'
 ]
 

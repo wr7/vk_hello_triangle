@@ -5,6 +5,8 @@
 
 struct MainWindow {
     GLFWwindow *window;
+    VkInstance instance;
+    VkPhysicalDevice graphics_card;
 };
 
 typedef struct MainWindow MainWindow;

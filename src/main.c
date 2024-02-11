@@ -1,6 +1,6 @@
 #include "main_window.h"
 
-int main(int argc, char **argv) {
+int main(void) {
     MainWindow window = MainWindow_create();
     MainWindow_run(&window);
     MainWindow_destroy(&window);
