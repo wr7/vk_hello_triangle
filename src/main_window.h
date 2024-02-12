@@ -1,12 +1,12 @@
 #pragma once
 
+#include "vulkan_setup.h"
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
 struct MainWindow {
     GLFWwindow *window;
-    VkInstance instance;
-    VkPhysicalDevice graphics_card;
+    VulkanState vk_state;
 };
 
 typedef struct MainWindow MainWindow;

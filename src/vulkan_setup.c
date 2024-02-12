@@ -8,6 +8,7 @@
 #include "vulkan_setup.h"
 
 #include "src/util.h"
+#include "vulkan_setup/graphics_card.h"
 
 const char *const VALIDATION_LAYERS[] = {
     "VK_LAYER_KHRONOS_validation"
@@ -19,8 +20,22 @@ const bool ENABLE_VALIDATION_LAYERS = false;
 const bool ENABLE_VALIDATION_LAYERS = true;
 #endif
 
+static VkInstance createVulkanInstance(void);
 
-VkInstance createVulkanInstance(void) {
+VulkanState VulkanState_create(void) {
+    VulkanState s = {0};
+
+    s.instance = createVulkanInstance();
+    s.graphics_card = selectGraphicsCard(s.instance);
+
+    return s;
+}
+
+void VulkanState_destroy(VulkanState s) {
+    vkDestroyInstance(s.instance, NULL);
+}
+
+static VkInstance createVulkanInstance(void) {
     VkApplicationInfo appInfo = {0};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.pApplicationName = "Hello Triangle";

@@ -5,15 +5,9 @@
 
 #include "main_window.h"
 #include "vulkan_setup.h"
-#include "vulkan_setup/graphics_card.h"
 
 const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
-
-static void MainWindow_initVulkan(MainWindow *w) {
-    w->instance = createVulkanInstance();
-    w->graphics_card = selectGraphicsCard(w->instance);
-}
 
 MainWindow MainWindow_create(void) {
     MainWindow w = {0};
@@ -25,7 +19,7 @@ MainWindow MainWindow_create(void) {
 
     w.window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Vulkan Window", NULL, NULL);
 
-    MainWindow_initVulkan(&w);
+    w.vk_state = VulkanState_create();
 
     return w;
 }
@@ -37,7 +31,7 @@ void MainWindow_run(MainWindow *w) {
 }
 
 void MainWindow_destroy(MainWindow *w) {
-    vkDestroyInstance(w->instance, NULL);
+    VulkanState_destroy(w->vk_state);
     
     glfwDestroyWindow(w->window);
     glfwTerminate();
