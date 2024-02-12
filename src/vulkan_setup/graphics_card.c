@@ -5,7 +5,7 @@
 
 #include <vulkan/vk_enum_string_helper.h>
 
-#include "vulkan_setup/device_setup.h"
+#include "vulkan_setup/graphics_card.h"
 
 #include "util.h"
 

@@ -9,7 +9,7 @@ project_source_files = [
   'src/main.c',
   'src/util.c',
   'src/vulkan_setup.c',
-  'src/vulkan_setup/device_setup.c',
+  'src/vulkan_setup/graphics_card.c',
   'src/main_window.c'
 ]
 

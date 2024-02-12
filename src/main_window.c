@@ -5,7 +5,7 @@
 
 #include "main_window.h"
 #include "vulkan_setup.h"
-#include "vulkan_setup/device_setup.h"
+#include "vulkan_setup/graphics_card.h"
 
 const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
