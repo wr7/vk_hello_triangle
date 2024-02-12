@@ -6,7 +6,7 @@
 #include "util.h"
 
 typedef struct {
-    OptionalU32 graphicsFamily;
+    OptionalU32 graphics_family;
 } QueueFamilyIndices ;
 
 VkPhysicalDevice selectGraphicsCard(VkInstance instance);

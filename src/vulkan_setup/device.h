@@ -3,4 +3,4 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-VkDevice createLogicalDevice(VkPhysicalDevice graphics_card);
+VkDevice createLogicalDevice(VkPhysicalDevice graphics_card, VkQueue *graphics_queue);

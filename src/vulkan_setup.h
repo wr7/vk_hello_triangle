@@ -9,6 +9,7 @@ typedef struct {
     VkInstance instance;
     VkPhysicalDevice graphics_card;
     VkDevice device;
+    VkQueue graphics_queue;
 } VulkanState;
 
 static const char *const VALIDATION_LAYERS[] = {

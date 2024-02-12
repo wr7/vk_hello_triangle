@@ -25,7 +25,7 @@ VulkanState VulkanState_create(void) {
 
     s.instance = createVulkanInstance();
     s.graphics_card = selectGraphicsCard(s.instance);
-    s.device = createLogicalDevice(s.graphics_card);
+    s.device = createLogicalDevice(s.graphics_card, &s.graphics_queue);
 
     return s;
 }

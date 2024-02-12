@@ -12,7 +12,7 @@
 static bool isDeviceSuitable(VkPhysicalDevice device) {
     QueueFamilyIndices families = findQueueFamilies(device);
 
-    if(families.graphicsFamily.present) {
+    if(families.graphics_family.present) {
         return true;
     } else {
         return false;
@@ -65,7 +65,7 @@ QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
         VkQueueFamilyProperties family = queue_families[i];
 
         if (family.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-            indices.graphicsFamily = OptionalU32_of(i);
+            indices.graphics_family = OptionalU32_of(i);
         }
     }
 
