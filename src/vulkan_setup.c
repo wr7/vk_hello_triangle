@@ -4,15 +4,13 @@
 #include<stdbool.h>
 
 #include <vulkan/vk_enum_string_helper.h>
+#include <vulkan/vulkan_core.h>
 
 #include "vulkan_setup.h"
 
 #include "src/util.h"
+#include "vulkan_setup/device.h"
 #include "vulkan_setup/graphics_card.h"
-
-const char *const VALIDATION_LAYERS[] = {
-    "VK_LAYER_KHRONOS_validation"
-};
 
 #ifdef NDEBUG
 const bool ENABLE_VALIDATION_LAYERS = false;
@@ -27,11 +25,13 @@ VulkanState VulkanState_create(void) {
 
     s.instance = createVulkanInstance();
     s.graphics_card = selectGraphicsCard(s.instance);
+    s.device = createLogicalDevice(s.graphics_card);
 
     return s;
 }
 
 void VulkanState_destroy(VulkanState s) {
+    vkDestroyDevice(s.device, NULL);
     vkDestroyInstance(s.instance, NULL);
 }
 

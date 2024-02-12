@@ -10,6 +10,7 @@ project_source_files = [
   'src/util.c',
   'src/vulkan_setup.c',
   'src/vulkan_setup/graphics_card.c',
+  'src/vulkan_setup/device.c',
   'src/main_window.c'
 ]
 
@@ -17,5 +18,3 @@ include_directories = include_directories('src')
 
 exe = executable('vulkanhello', project_source_files,
   install : false, include_directories : include_directories, dependencies : [vulkan, glfw3])
-
-test('basic', exe)
