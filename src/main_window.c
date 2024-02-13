@@ -19,7 +19,7 @@ MainWindow MainWindow_create(void) {
 
     w.window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Vulkan Window", NULL, NULL);
 
-    w.vk_state = VulkanState_create();
+    w.vk_state = VulkanState_create(w.window);
 
     return w;
 }

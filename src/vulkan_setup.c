@@ -19,11 +19,13 @@ const bool ENABLE_VALIDATION_LAYERS = true;
 #endif
 
 static VkInstance createVulkanInstance(void);
+static VkSurfaceKHR createWindowSurface(VkInstance instance, GLFWwindow *window);
 
-VulkanState VulkanState_create(void) {
+VulkanState VulkanState_create(GLFWwindow *window) {
     VulkanState s = {0};
 
     s.instance = createVulkanInstance();
+    s.window_surface = createWindowSurface(s.instance, window);
     s.graphics_card = selectGraphicsCard(s.instance);
     s.device = createLogicalDevice(s.graphics_card, &s.graphics_queue);
 
@@ -32,6 +34,7 @@ VulkanState VulkanState_create(void) {
 
 void VulkanState_destroy(VulkanState s) {
     vkDestroyDevice(s.device, NULL);
+    vkDestroySurfaceKHR(s.instance, s.window_surface, NULL);
     vkDestroyInstance(s.instance, NULL);
 }
 
@@ -72,4 +75,16 @@ static VkInstance createVulkanInstance(void) {
     }
 
     return instance;
+}
+
+static VkSurfaceKHR createWindowSurface(VkInstance instance, GLFWwindow *window) {
+    VkSurfaceKHR surface;
+
+    VkResult result = glfwCreateWindowSurface(instance, window, NULL, &surface);
+    if(result != VK_SUCCESS) {
+        fprintf(stderr, "Failed to create window surface: %s\n", string_VkResult(result));
+        exit(result);
+    }
+
+    return surface;
 }

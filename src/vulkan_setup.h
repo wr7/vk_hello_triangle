@@ -7,6 +7,7 @@
 
 typedef struct {
     VkInstance instance;
+    VkSurfaceKHR window_surface;
     VkPhysicalDevice graphics_card;
     VkDevice device;
     VkQueue graphics_queue;
@@ -17,5 +18,5 @@ static const char *const VALIDATION_LAYERS[] = {
 };
 extern const bool ENABLE_VALIDATION_LAYERS;
 
-VulkanState VulkanState_create(void);
+VulkanState VulkanState_create(GLFWwindow *window);
 void VulkanState_destroy(VulkanState s);
