@@ -1,29 +1,41 @@
-#include "vulkan_setup/device.h"
+#include <stdio.h>
+
+#include <vulkan/vk_enum_string_helper.h>
 
 #include "util.h"
 #include "vulkan_setup.h"
-#include "vulkan_setup/graphics_card.h"
-#include <stdio.h>
-#include <vulkan/vk_enum_string_helper.h>
+#include "vulkan_setup/device.h"
 
-VkDevice createLogicalDevice(VkPhysicalDevice graphics_card, VkQueue *graphics_queue) {
-    QueueFamilyIndices indices = findQueueFamilies(graphics_card);
+VkDevice createLogicalDevice(VkPhysicalDevice graphics_card, const QueueFamilyIndices *const indices) {
+    const size_t num_unique_queues = QueueFamilyIndices_num_unique_indices(indices);
 
-    VkDeviceQueueCreateInfo queueCreateInfo = {0};
-    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    queueCreateInfo.queueFamilyIndex = indices.graphics_family.value;
-    queueCreateInfo.queueCount = 1;
+    VkDeviceQueueCreateInfo *queue_create_infos = emalloc(num_unique_queues * sizeof(VkDeviceQueueCreateInfo));
 
-    float queuePriority = 1.0f;
-    queueCreateInfo.pQueuePriorities = &queuePriority;
+    float queue_priority = 1.0f;
+
+    size_t i = 0;
+    for(
+        OptionalU32 unique_index = QueueFamilyIndices_next_unique_index(indices, OptionalU32_empty()); 
+        unique_index.present;
+        unique_index = QueueFamilyIndices_next_unique_index(indices, unique_index)
+    ) {
+        VkDeviceQueueCreateInfo queue_create_info = {0};
+        queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queue_create_info.queueFamilyIndex = unique_index.value;
+        queue_create_info.queueCount = 1;
+        queue_create_info.pQueuePriorities = &queue_priority;
+        queue_create_infos[i] = queue_create_info;
+
+        i++;
+    }
 
     VkPhysicalDeviceFeatures deviceFeatures = {0};
 
     VkDeviceCreateInfo createInfo = {0};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
-    createInfo.pQueueCreateInfos = &queueCreateInfo;
-    createInfo.queueCreateInfoCount = 1;
+    createInfo.pQueueCreateInfos = queue_create_infos;
+    createInfo.queueCreateInfoCount = num_unique_queues;
 
     createInfo.pEnabledFeatures = &deviceFeatures;
 
@@ -44,7 +56,7 @@ VkDevice createLogicalDevice(VkPhysicalDevice graphics_card, VkQueue *graphics_q
         exit(result);
     }
 
-    vkGetDeviceQueue(device, indices.graphics_family.value, 0, graphics_queue);
+    free(queue_create_infos);
 
     return device;
 }

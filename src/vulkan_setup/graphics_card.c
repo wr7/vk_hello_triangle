@@ -4,22 +4,13 @@
 #include<stdbool.h>
 
 #include <vulkan/vk_enum_string_helper.h>
+#include <vulkan/vulkan_core.h>
 
 #include "vulkan_setup/graphics_card.h"
 
 #include "util.h"
 
-static bool isDeviceSuitable(VkPhysicalDevice device) {
-    QueueFamilyIndices families = findQueueFamilies(device);
-
-    if(families.graphics_family.present) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-VkPhysicalDevice selectGraphicsCard(VkInstance instance) {
+VkPhysicalDevice selectGraphicsCard(VkInstance instance, VkSurfaceKHR window_surface, QueueFamilyIndices *out_queue_indices) {
     uint32_t num_devices = 0;
     VkResult result = vkEnumeratePhysicalDevices(instance, &num_devices, NULL);
     if(result != VK_SUCCESS) {
@@ -30,28 +21,24 @@ VkPhysicalDevice selectGraphicsCard(VkInstance instance) {
     VkPhysicalDevice *available_devices = emalloc(num_devices * sizeof(VkPhysicalDevice));
     vkEnumeratePhysicalDevices(instance, &num_devices, available_devices);
 
-    VkPhysicalDevice selected_device = NULL;
+    for(uint32_t card_num = 0; card_num < num_devices; card_num++) {
+        VkPhysicalDevice device = available_devices[card_num];
 
-    for(uint32_t i = 0; i < num_devices; i++) {
-        VkPhysicalDevice device = available_devices[i];
+        QueueFamilyIndices families = findQueueFamilies(device, window_surface);
 
-        if(isDeviceSuitable(device)) {
-            selected_device = device;
-            break;
+        if(QueueFamilyIndices_has_minimum_requirements(&families)) {
+            *out_queue_indices = families;
+
+            free(available_devices);
+            return device;
         }
     }
 
-    free(available_devices);
-
-    if(selected_device == NULL) {
-        fprintf(stderr, "Failed to find suitable Vulkan graphics card.\n");
-        exit(1);
-    }
-
-    return selected_device;
+    fprintf(stderr, "Failed to find suitable Vulkan graphics card.\n");
+    exit(1);
 }
 
-QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
+QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR window_surface) {
     QueueFamilyIndices indices = {0};
 
     uint32_t num_queue_families = 0;
@@ -64,12 +51,24 @@ QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device) {
     for(uint32_t i = 0; i < num_queue_families; i++) {
         VkQueueFamilyProperties family = queue_families[i];
 
-        if (family.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-            indices.graphics_family = OptionalU32_of(i);
+        if(!indices.graphics_family.present) {
+            if (family.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+                indices.graphics_family = OptionalU32_of(i);
+            }
         }
+
+        if(!indices.presentation_family.present) {
+            VkBool32 present_support = false;
+            vkGetPhysicalDeviceSurfaceSupportKHR(device, i, window_surface, &present_support);
+            if(present_support) {
+                indices.presentation_family = OptionalU32_of(i);
+            }
+        }
+        
     }
 
     free(queue_families);
 
     return indices;
 }
+

@@ -11,6 +11,7 @@
 #include "src/util.h"
 #include "vulkan_setup/device.h"
 #include "vulkan_setup/graphics_card.h"
+#include "vulkan_setup/queues.h"
 
 #ifdef NDEBUG
 const bool ENABLE_VALIDATION_LAYERS = false;
@@ -26,8 +27,12 @@ VulkanState VulkanState_create(GLFWwindow *window) {
 
     s.instance = createVulkanInstance();
     s.window_surface = createWindowSurface(s.instance, window);
-    s.graphics_card = selectGraphicsCard(s.instance);
-    s.device = createLogicalDevice(s.graphics_card, &s.graphics_queue);
+
+    QueueFamilyIndices indices;
+    
+    s.graphics_card = selectGraphicsCard(s.instance, s.window_surface, &indices);
+    s.device = createLogicalDevice(s.graphics_card, &indices);
+    s.queues = Queues_create(s.device, &indices);
 
     return s;
 }

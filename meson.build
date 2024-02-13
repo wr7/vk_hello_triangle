@@ -7,11 +7,12 @@ glfw3 = dependency('glfw3')
 
 project_source_files = [
   'src/main.c',
+  'src/main_window.c',
   'src/util.c',
   'src/vulkan_setup.c',
-  'src/vulkan_setup/graphics_card.c',
   'src/vulkan_setup/device.c',
-  'src/main_window.c'
+  'src/vulkan_setup/graphics_card.c',
+  'src/vulkan_setup/queues.c'
 ]
 
 include_directories = include_directories('src')

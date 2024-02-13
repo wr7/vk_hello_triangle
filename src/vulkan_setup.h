@@ -1,5 +1,6 @@
 #pragma once
 
+#include "vulkan_setup/queues.h"
 #include <stdbool.h>
 
 #define GLFW_INCLUDE_VULKAN
@@ -10,7 +11,7 @@ typedef struct {
     VkSurfaceKHR window_surface;
     VkPhysicalDevice graphics_card;
     VkDevice device;
-    VkQueue graphics_queue;
+    Queues queues;
 } VulkanState;
 
 static const char *const VALIDATION_LAYERS[] = {

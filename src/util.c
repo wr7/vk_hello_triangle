@@ -4,6 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+OptionalU32 OptionalU32_empty(void) {
+    OptionalU32 val = {0};
+    return val;
+}
+
 OptionalU32 OptionalU32_of(uint32_t val) {
     OptionalU32 optional;
     optional.present = true;
