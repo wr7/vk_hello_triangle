@@ -4,6 +4,7 @@
 
 #include "util.h"
 #include "vulkan_setup.h"
+#include "vulkan_setup/graphics_card.h"
 #include "vulkan_setup/device.h"
 
 VkDevice createLogicalDevice(VkPhysicalDevice graphics_card, const QueueFamilyIndices *const indices) {
@@ -39,7 +40,8 @@ VkDevice createLogicalDevice(VkPhysicalDevice graphics_card, const QueueFamilyIn
 
     createInfo.pEnabledFeatures = &deviceFeatures;
 
-    createInfo.enabledExtensionCount = 0;
+    createInfo.enabledExtensionCount = NUM_REQUIRED_EXTENTIONS;
+    createInfo.ppEnabledExtensionNames = REQUIRED_EXTENTIONS;
 
     if (ENABLE_VALIDATION_LAYERS) {
         createInfo.enabledLayerCount = ARRAY_LENGTH(VALIDATION_LAYERS);
@@ -51,10 +53,7 @@ VkDevice createLogicalDevice(VkPhysicalDevice graphics_card, const QueueFamilyIn
     VkDevice device;
 
     VkResult result = vkCreateDevice(graphics_card, &createInfo, NULL, &device);
-    if(result != VK_SUCCESS) {
-        fprintf(stderr, "Failed to create logical vulkan device: %s\n", string_VkResult(result));
-        exit(result);
-    }
+    handleVkError("Failed to create logical vulkan device", result);
 
     free(queue_create_infos);
 

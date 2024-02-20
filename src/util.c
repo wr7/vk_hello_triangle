@@ -1,5 +1,7 @@
 #include "util.h"
 
+#include <vulkan/vk_enum_string_helper.h>
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,6 +17,14 @@ OptionalU32 OptionalU32_of(uint32_t val) {
     optional.value = val;
 
     return optional;
+}
+
+void handleVkError(const char *const msg, VkResult result) {
+    if(result != VK_SUCCESS) {
+        fprintf(stderr, "%s: %s\n", msg, string_VkResult(result));
+        exit(result);
+    }
+    
 }
 
 /// Tries to allocate `bytes` bytes. On error, prints to stderr and terminates the program.

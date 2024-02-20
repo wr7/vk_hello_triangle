@@ -3,30 +3,78 @@
 #include <stdio.h>
 #include<stdbool.h>
 
+#include <string.h>
 #include <vulkan/vk_enum_string_helper.h>
 #include <vulkan/vulkan_core.h>
 
 #include "vulkan_setup/graphics_card.h"
 
 #include "util.h"
+#include "vulkan_setup/queues.h"
+
+const char *const REQUIRED_EXTENTIONS[] = {
+    VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+};
+
+const size_t NUM_REQUIRED_EXTENTIONS = ARRAY_LENGTH(REQUIRED_EXTENTIONS);
+
+
+static bool hasRequiredExtentions(VkPhysicalDevice device) {
+    uint32_t num_extentions = 0;
+    vkEnumerateDeviceExtensionProperties(device, NULL, &num_extentions, NULL);
+
+    VkExtensionProperties *extentions = malloc(num_extentions * sizeof(VkExtensionProperties));
+
+    VkResult result = vkEnumerateDeviceExtensionProperties(device, NULL, &num_extentions, extentions);
+    handleVkError("Failed to query device properties", result);
+
+    bool found_all_extentions = true;
+
+    for(size_t r = 0; r < NUM_REQUIRED_EXTENTIONS; r++) {
+        bool found_extention = false;
+        for(size_t i = 0; i < num_extentions; i++) {
+            if(strcmp(REQUIRED_EXTENTIONS[r], extentions[i].extensionName) == 0) {
+                found_extention = true;
+                break;
+            }
+        }
+
+        if(!found_extention) {
+            found_all_extentions = false;
+            break;
+        }
+    }
+
+    free(extentions);
+
+    return found_all_extentions;
+}
+
+static bool isDeviceSuitable(const VkPhysicalDevice device, const QueueFamilyIndices *const indices) {
+    if(!QueueFamilyIndices_has_minimum_requirements(indices)) {
+        return false;
+    } else if(!hasRequiredExtentions(device)) {
+        return false;
+    } else {
+        return true;
+    }
+}
 
 VkPhysicalDevice selectGraphicsCard(VkInstance instance, VkSurfaceKHR window_surface, QueueFamilyIndices *out_queue_indices) {
     uint32_t num_devices = 0;
-    VkResult result = vkEnumeratePhysicalDevices(instance, &num_devices, NULL);
-    if(result != VK_SUCCESS) {
-        fprintf(stderr, "Failed to query graphics cards: %s\n", string_VkResult(result));
-        exit(result);
-    }
+    vkEnumeratePhysicalDevices(instance, &num_devices, NULL);
 
     VkPhysicalDevice *available_devices = emalloc(num_devices * sizeof(VkPhysicalDevice));
-    vkEnumeratePhysicalDevices(instance, &num_devices, available_devices);
+
+    VkResult result = vkEnumeratePhysicalDevices(instance, &num_devices, available_devices);
+    handleVkError("Failed to query graphics card", result);
 
     for(uint32_t card_num = 0; card_num < num_devices; card_num++) {
         VkPhysicalDevice device = available_devices[card_num];
 
         QueueFamilyIndices families = findQueueFamilies(device, window_surface);
 
-        if(QueueFamilyIndices_has_minimum_requirements(&families)) {
+        if(isDeviceSuitable(device, &families)) {
             *out_queue_indices = families;
 
             free(available_devices);

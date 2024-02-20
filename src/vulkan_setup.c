@@ -74,10 +74,7 @@ static VkInstance createVulkanInstance(void) {
     VkInstance instance = NULL;
 
     VkResult result = vkCreateInstance(&createInfo, NULL, &instance);
-    if(result != VK_SUCCESS) {
-        fprintf(stderr, "Failed to initialize Vulkan: %s\n", string_VkResult(result));
-        exit(result);
-    }
+    handleVkError("Failed to initialize vulkan", result);
 
     return instance;
 }
@@ -86,10 +83,7 @@ static VkSurfaceKHR createWindowSurface(VkInstance instance, GLFWwindow *window)
     VkSurfaceKHR surface;
 
     VkResult result = glfwCreateWindowSurface(instance, window, NULL, &surface);
-    if(result != VK_SUCCESS) {
-        fprintf(stderr, "Failed to create window surface: %s\n", string_VkResult(result));
-        exit(result);
-    }
+    handleVkError("Failed to create window surface", result);
 
     return surface;
 }
