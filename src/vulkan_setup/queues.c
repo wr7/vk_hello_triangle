@@ -1,10 +1,20 @@
 #include "queues.h"
+#include "util.h"
+#include <vulkan/vulkan_core.h>
 
 Queues Queues_create(VkDevice device, const QueueFamilyIndices *const indices) {
+    const size_t num_queues = sizeof(QueueFamilyIndices) / sizeof(OptionalU32);
+
     Queues queues = {0};
 
-    vkGetDeviceQueue(device, indices->graphics_family.value, 0, &queues.graphics_queue);
-    vkGetDeviceQueue(device, indices->presentation_family.value, 0, &queues.presentation_queue);
+    const OptionalU32 *const queue_indices = (const OptionalU32 *const) indices;
+    VkQueue *p_queues = (VkQueue *) &queues;
+
+    for(size_t i = 0; i < num_queues; i++) {
+        if(queue_indices[i].present) {
+            vkGetDeviceQueue(device, queue_indices[i].value, 0, p_queues + i);
+        }
+    }
 
     return queues;
 }
