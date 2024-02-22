@@ -11,6 +11,7 @@
 
 #include "util.h"
 #include "vulkan_setup/queues.h"
+#include "vulkan_setup/swapchain.h"
 
 const char *const REQUIRED_EXTENTIONS[] = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME,
@@ -19,7 +20,7 @@ const char *const REQUIRED_EXTENTIONS[] = {
 const size_t NUM_REQUIRED_EXTENTIONS = ARRAY_LENGTH(REQUIRED_EXTENTIONS);
 
 
-static bool hasRequiredExtentions(VkPhysicalDevice device) {
+static bool hasRequiredExtentions(const VkPhysicalDevice device) {
     uint32_t num_extentions = 0;
     vkEnumerateDeviceExtensionProperties(device, NULL, &num_extentions, NULL);
 
@@ -50,17 +51,28 @@ static bool hasRequiredExtentions(VkPhysicalDevice device) {
     return found_all_extentions;
 }
 
-static bool isDeviceSuitable(const VkPhysicalDevice device, const QueueFamilyIndices *const indices) {
+static bool isDeviceSuitable(const VkPhysicalDevice device, const VkSurfaceKHR surface, const QueueFamilyIndices *const indices) {
     if(!QueueFamilyIndices_has_minimum_requirements(indices)) {
         return false;
-    } else if(!hasRequiredExtentions(device)) {
+    } 
+    
+    if(!hasRequiredExtentions(device)) {
         return false;
-    } else {
-        return true;
     }
+
+    const SwapchainSupportDetails swapchain_details = SwapchainSupportDetails_create(device, surface);
+
+    if(!SwapchainSupportDetails_is_adequate(&swapchain_details)) {
+        SwapchainSupportDetails_free(&swapchain_details);
+        return false;
+    }
+
+    SwapchainSupportDetails_free(&swapchain_details);
+
+    return true;
 }
 
-VkPhysicalDevice selectGraphicsCard(VkInstance instance, VkSurfaceKHR window_surface, QueueFamilyIndices *out_queue_indices) {
+VkPhysicalDevice selectGraphicsCard(const VkInstance instance, const VkSurfaceKHR window_surface, QueueFamilyIndices *const out_queue_indices) {
     uint32_t num_devices = 0;
     vkEnumeratePhysicalDevices(instance, &num_devices, NULL);
 
@@ -74,7 +86,7 @@ VkPhysicalDevice selectGraphicsCard(VkInstance instance, VkSurfaceKHR window_sur
 
         QueueFamilyIndices families = findQueueFamilies(device, window_surface);
 
-        if(isDeviceSuitable(device, &families)) {
+        if(isDeviceSuitable(device, window_surface, &families)) {
             *out_queue_indices = families;
 
             free(available_devices);
@@ -86,7 +98,7 @@ VkPhysicalDevice selectGraphicsCard(VkInstance instance, VkSurfaceKHR window_sur
     exit(1);
 }
 
-QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR window_surface) {
+QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice device, const VkSurfaceKHR window_surface) {
     QueueFamilyIndices indices = {0};
 
     uint32_t num_queue_families = 0;
