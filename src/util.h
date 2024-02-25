@@ -21,3 +21,5 @@ void handleVkError(const char *const msg, VkResult result);
 
 /// Tries to allocate `bytes` bytes. On error, prints to stderr and terminates the program.
 void *emalloc(size_t bytes);
+
+uint32_t uint32_t_clamp(uint32_t min, uint32_t val, uint32_t max);

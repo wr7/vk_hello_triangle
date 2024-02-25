@@ -1,5 +1,6 @@
 #pragma once
 
+#include "vulkan_setup.h"
 #include <stdbool.h>
 
 #define GLFW_INCLUDE_VULKAN
@@ -14,6 +15,8 @@ typedef struct {
     VkPresentModeKHR *present_modes;
     uint32_t num_present_modes;
 } SwapchainSupportDetails;
+
+VkSwapchainKHR createSwapchain(const VulkanState *const s, GLFWwindow *window);
 
 SwapchainSupportDetails SwapchainSupportDetails_create(const VkPhysicalDevice device, const VkSurfaceKHR surface);
 bool SwapchainSupportDetails_is_adequate(const SwapchainSupportDetails *const details);

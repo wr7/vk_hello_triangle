@@ -12,6 +12,7 @@
 #include "vulkan_setup/device.h"
 #include "vulkan_setup/graphics_card.h"
 #include "vulkan_setup/queues.h"
+#include "vulkan_setup/swapchain.h"
 
 #ifdef NDEBUG
 const bool ENABLE_VALIDATION_LAYERS = false;
@@ -28,16 +29,17 @@ VulkanState VulkanState_create(GLFWwindow *window) {
     s.instance = createVulkanInstance();
     s.window_surface = createWindowSurface(s.instance, window);
 
-    QueueFamilyIndices indices;
-    
-    s.graphics_card = selectGraphicsCard(s.instance, s.window_surface, &indices);
-    s.device = createLogicalDevice(s.graphics_card, &indices);
-    s.queues = Queues_create(s.device, &indices);
+    s.graphics_card = selectGraphicsCard(s.instance, s.window_surface, &s.indices);
+    s.device = createLogicalDevice(s.graphics_card, &s.indices);
+    s.queues = Queues_create(s.device, &s.indices);
+
+    s.swapchain = createSwapchain(&s, window);
 
     return s;
 }
 
 void VulkanState_destroy(VulkanState s) {
+    vkDestroySwapchainKHR(s.device, s.swapchain, NULL);
     vkDestroyDevice(s.device, NULL);
     vkDestroySurfaceKHR(s.instance, s.window_surface, NULL);
     vkDestroyInstance(s.instance, NULL);

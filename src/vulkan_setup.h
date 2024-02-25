@@ -11,7 +11,10 @@ typedef struct {
     VkSurfaceKHR window_surface;
     VkPhysicalDevice graphics_card;
     VkDevice device;
+    VkSwapchainKHR swapchain;
+
     Queues queues;
+    QueueFamilyIndices indices;
 } VulkanState;
 
 static const char *const VALIDATION_LAYERS[] = {
