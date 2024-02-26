@@ -24,7 +24,7 @@ static bool hasRequiredExtentions(const VkPhysicalDevice device) {
     uint32_t num_extentions = 0;
     vkEnumerateDeviceExtensionProperties(device, NULL, &num_extentions, NULL);
 
-    VkExtensionProperties *extentions = malloc(num_extentions * sizeof(VkExtensionProperties));
+    VkExtensionProperties *extentions = emalloc(num_extentions * sizeof(VkExtensionProperties));
 
     VkResult result = vkEnumerateDeviceExtensionProperties(device, NULL, &num_extentions, extentions);
     handleVkError("Failed to query device properties", result);

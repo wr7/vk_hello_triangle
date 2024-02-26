@@ -92,7 +92,7 @@ void getSwapchainImages(const VulkanState *const s, uint32_t *o_num_images, VkIm
     *o_num_images = 0;
 
     vkGetSwapchainImagesKHR(s->device, s->swapchain, o_num_images, NULL);
-    *o_images = malloc(*o_num_images * sizeof(VkImage));
+    *o_images = emalloc(*o_num_images * sizeof(VkImage));
     handleVkError("Failed to get swapchain images", vkGetSwapchainImagesKHR(s->device, s->swapchain, o_num_images, *o_images));
 }
 
