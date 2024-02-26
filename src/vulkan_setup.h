@@ -15,6 +15,14 @@ typedef struct {
 
     Queues queues;
     QueueFamilyIndices indices;
+
+    // Swapchain stuff //
+
+    uint32_t num_swapchain_images;
+    VkImage *swapchain_images;
+
+    VkExtent2D swapchain_extent;
+    VkFormat swapchain_image_format;
 } VulkanState;
 
 static const char *const VALIDATION_LAYERS[] = {

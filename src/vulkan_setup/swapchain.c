@@ -8,12 +8,16 @@ static VkExtent2D selectSwapExtent(const SwapchainSupportDetails *const details,
 static VkSurfaceFormatKHR selectSwapSurfaceFormat(const SwapchainSupportDetails *const details);
 static VkPresentModeKHR selectSwapPresentMode(const SwapchainSupportDetails *const details);
 
-VkSwapchainKHR createSwapchain(const VulkanState *const s, GLFWwindow *window) {
+VkSwapchainKHR createSwapchain(const VulkanState *const s, VkExtent2D *o_swapchain_extent, VkFormat *o_swapchain_image_format, 
+                               GLFWwindow *window) {
     const SwapchainSupportDetails details = SwapchainSupportDetails_create(s->graphics_card, s->window_surface);
 
     VkSurfaceFormatKHR surfaceFormat = selectSwapSurfaceFormat(&details);
     VkPresentModeKHR presentMode = selectSwapPresentMode(&details);
     VkExtent2D extent = selectSwapExtent(&details, window);
+
+    *o_swapchain_extent  = extent;
+    *o_swapchain_image_format = surfaceFormat.format;
 
     uint32_t image_count = details.capabilities.minImageCount + 1;
 
@@ -82,6 +86,14 @@ SwapchainSupportDetails SwapchainSupportDetails_create(const VkPhysicalDevice de
     );
 
     return details;
+}
+
+void getSwapchainImages(const VulkanState *const s, uint32_t *o_num_images, VkImage **o_images) {
+    *o_num_images = 0;
+
+    vkGetSwapchainImagesKHR(s->device, s->swapchain, o_num_images, NULL);
+    *o_images = malloc(*o_num_images * sizeof(VkImage));
+    handleVkError("Failed to get swapchain images", vkGetSwapchainImagesKHR(s->device, s->swapchain, o_num_images, *o_images));
 }
 
 bool SwapchainSupportDetails_is_adequate(const SwapchainSupportDetails *const details) {

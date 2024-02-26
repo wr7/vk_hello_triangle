@@ -16,7 +16,9 @@ typedef struct {
     uint32_t num_present_modes;
 } SwapchainSupportDetails;
 
-VkSwapchainKHR createSwapchain(const VulkanState *const s, GLFWwindow *window);
+VkSwapchainKHR createSwapchain(const VulkanState *const s, VkExtent2D *o_swapchain_extent, VkFormat *o_swapchain_image_format, 
+                               GLFWwindow *window);
+void getSwapchainImages(const VulkanState *const s, uint32_t *o_num_images, VkImage **o_images);
 
 SwapchainSupportDetails SwapchainSupportDetails_create(const VkPhysicalDevice device, const VkSurfaceKHR surface);
 bool SwapchainSupportDetails_is_adequate(const SwapchainSupportDetails *const details);

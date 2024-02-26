@@ -33,12 +33,14 @@ VulkanState VulkanState_create(GLFWwindow *window) {
     s.device = createLogicalDevice(s.graphics_card, &s.indices);
     s.queues = Queues_create(s.device, &s.indices);
 
-    s.swapchain = createSwapchain(&s, window);
+    s.swapchain = createSwapchain(&s, &s.swapchain_extent, &s.swapchain_image_format, window);
+    getSwapchainImages(&s, &s.num_swapchain_images, &s.swapchain_images);
 
     return s;
 }
 
 void VulkanState_destroy(VulkanState s) {
+    free(s.swapchain_images);
     vkDestroySwapchainKHR(s.device, s.swapchain, NULL);
     vkDestroyDevice(s.device, NULL);
     vkDestroySurfaceKHR(s.instance, s.window_surface, NULL);
