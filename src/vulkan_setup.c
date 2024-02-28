@@ -42,14 +42,15 @@ VulkanState VulkanState_create(GLFWwindow *window) {
     s.swapchain_image_views = createSwapchainImageViews(&s);
 
     s.render_pass = createRenderPass(&s);
-    s.pipeline_layout = createGraphicsPipeline(&s);
+    s.pipeline = createGraphicsPipeline(&s, &s.pipeline_layout);
 
     return s;
 }
 
 void VulkanState_destroy(VulkanState s) {
-    vkDestroyRenderPass(s.device, s.render_pass, NULL);
+    vkDestroyPipeline(s.device, s.pipeline, NULL);
     vkDestroyPipelineLayout(s.device, s.pipeline_layout, NULL);
+    vkDestroyRenderPass(s.device, s.render_pass, NULL);
     destroyImageViews(&s, s.swapchain_image_views);
     free(s.swapchain_images);
     vkDestroySwapchainKHR(s.device, s.swapchain, NULL);

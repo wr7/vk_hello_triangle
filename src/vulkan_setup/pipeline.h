@@ -2,4 +2,4 @@
 
 #include "vulkan_setup.h"
 
-VkPipelineLayout createGraphicsPipeline(const VulkanState *const s);
+VkPipeline createGraphicsPipeline(const VulkanState *const s, VkPipelineLayout *const o_pipeline_layout);

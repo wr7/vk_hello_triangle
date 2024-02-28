@@ -13,7 +13,7 @@ __attribute__( ( aligned ( 4 ) ) )
 
 static VkShaderModule createShaderModule(const VkDevice device, const unsigned char *const bytecode, const uint32_t code_length);
 
-VkPipelineLayout createGraphicsPipeline(const VulkanState *const s) {
+VkPipeline createGraphicsPipeline(const VulkanState *const s, VkPipelineLayout *const o_pipeline_layout) {
     VkShaderModule vertex_shader_module = createShaderModule(s->device, VERTEX_SHADER, ARRAY_LENGTH(VERTEX_SHADER));
     VkShaderModule fragment_shader_module = createShaderModule(s->device, FRAGMENT_SHADER, ARRAY_LENGTH(FRAGMENT_SHADER));
 
@@ -109,7 +109,6 @@ VkPipelineLayout createGraphicsPipeline(const VulkanState *const s) {
     colorBlending.blendConstants[2] = 0.0f; // Optional
     colorBlending.blendConstants[3] = 0.0f; // Optional
 
-    VkPipelineLayout pipeline_layout;
     // Pipeline layout //
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {0};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -119,13 +118,37 @@ VkPipelineLayout createGraphicsPipeline(const VulkanState *const s) {
     pipelineLayoutInfo.pPushConstantRanges = NULL; // Optional
 
     handleVkError("Failed to create pipeline layout", 
-        vkCreatePipelineLayout(s->device, &pipelineLayoutInfo, NULL, &pipeline_layout)
+        vkCreatePipelineLayout(s->device, &pipelineLayoutInfo, NULL, o_pipeline_layout)
+    );
+
+    VkGraphicsPipelineCreateInfo pipelineInfo = {0};
+    pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+    pipelineInfo.stageCount = ARRAY_LENGTH(shader_stages);
+    pipelineInfo.pStages = shader_stages;
+    pipelineInfo.pVertexInputState = &vertexInputInfo;
+    pipelineInfo.pInputAssemblyState = &inputAssembly;
+    pipelineInfo.pViewportState = &viewportState;
+    pipelineInfo.pRasterizationState = &rasterizer;
+    pipelineInfo.pMultisampleState = &multisampling;
+    pipelineInfo.pDepthStencilState = NULL; // Optional
+    pipelineInfo.pColorBlendState = &colorBlending;
+    pipelineInfo.pDynamicState = &dynamicState;
+    pipelineInfo.layout = *o_pipeline_layout;
+    pipelineInfo.subpass = 0;
+    pipelineInfo.renderPass = s->render_pass;
+
+    pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
+    pipelineInfo.basePipelineIndex = -1; // Optional
+
+    VkPipeline graphicsPipeline;
+    handleVkError("Failed to create graphics pipeline", 
+        vkCreateGraphicsPipelines(s->device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &graphicsPipeline)
     );
 
     vkDestroyShaderModule(s->device, fragment_shader_module, NULL);
     vkDestroyShaderModule(s->device, vertex_shader_module, NULL);
 
-    return pipeline_layout;
+    return graphicsPipeline;
 }
 
 static VkShaderModule createShaderModule(const VkDevice device, const unsigned char *const bytecode, const uint32_t code_length) {

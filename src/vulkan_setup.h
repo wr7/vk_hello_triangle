@@ -17,6 +17,8 @@ typedef struct {
     QueueFamilyIndices indices;
 
     VkRenderPass render_pass;
+
+    VkPipeline pipeline;
     VkPipelineLayout pipeline_layout;
 
     // Swapchain stuff //
