@@ -16,6 +16,8 @@ typedef struct {
     Queues queues;
     QueueFamilyIndices indices;
 
+    VkPipelineLayout pipeline_layout;
+
     // Swapchain stuff //
 
     uint32_t num_swapchain_images;

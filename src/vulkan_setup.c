@@ -12,6 +12,7 @@
 #include "vulkan_setup/device.h"
 #include "vulkan_setup/graphics_card.h"
 #include "vulkan_setup/images.h"
+#include "vulkan_setup/pipeline.h"
 #include "vulkan_setup/queues.h"
 #include "vulkan_setup/swapchain.h"
 
@@ -38,11 +39,13 @@ VulkanState VulkanState_create(GLFWwindow *window) {
     getSwapchainImages(&s, &s.num_swapchain_images, &s.swapchain_images);
 
     s.swapchain_image_views = createSwapchainImageViews(&s);
+    s.pipeline_layout = createGraphicsPipeline(&s);
 
     return s;
 }
 
 void VulkanState_destroy(VulkanState s) {
+    vkDestroyPipelineLayout(s.device, s.pipeline_layout, NULL);
     destroyImageViews(&s, s.swapchain_image_views);
     free(s.swapchain_images);
     vkDestroySwapchainKHR(s.device, s.swapchain, NULL);
