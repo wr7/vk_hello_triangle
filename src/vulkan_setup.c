@@ -14,6 +14,7 @@
 #include "vulkan_setup/images.h"
 #include "vulkan_setup/pipeline.h"
 #include "vulkan_setup/queues.h"
+#include "vulkan_setup/render_pass.h"
 #include "vulkan_setup/swapchain.h"
 
 #ifdef NDEBUG
@@ -39,12 +40,15 @@ VulkanState VulkanState_create(GLFWwindow *window) {
     getSwapchainImages(&s, &s.num_swapchain_images, &s.swapchain_images);
 
     s.swapchain_image_views = createSwapchainImageViews(&s);
+
+    s.render_pass = createRenderPass(&s);
     s.pipeline_layout = createGraphicsPipeline(&s);
 
     return s;
 }
 
 void VulkanState_destroy(VulkanState s) {
+    vkDestroyRenderPass(s.device, s.render_pass, NULL);
     vkDestroyPipelineLayout(s.device, s.pipeline_layout, NULL);
     destroyImageViews(&s, s.swapchain_image_views);
     free(s.swapchain_images);
