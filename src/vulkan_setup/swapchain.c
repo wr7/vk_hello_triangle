@@ -88,14 +88,6 @@ SwapchainSupportDetails SwapchainSupportDetails_create(const VkPhysicalDevice de
     return details;
 }
 
-void getSwapchainImages(const VulkanState *const s, uint32_t *o_num_images, VkImage **o_images) {
-    *o_num_images = 0;
-
-    vkGetSwapchainImagesKHR(s->device, s->swapchain, o_num_images, NULL);
-    *o_images = emalloc(*o_num_images * sizeof(VkImage));
-    handleVkError("Failed to get swapchain images", vkGetSwapchainImagesKHR(s->device, s->swapchain, o_num_images, *o_images));
-}
-
 bool SwapchainSupportDetails_is_adequate(const SwapchainSupportDetails *const details) {
     return details->num_formats != 0 && details->num_present_modes != 0;
 }

@@ -12,6 +12,7 @@ project_source_files = [
   'src/vulkan_setup.c',
   'src/vulkan_setup/device.c',
   'src/vulkan_setup/graphics_card.c',
+  'src/vulkan_setup/images.c',
   'src/vulkan_setup/queues.c',
   'src/vulkan_setup/swapchain.c'
 ]

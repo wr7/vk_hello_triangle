@@ -20,6 +20,7 @@ typedef struct {
 
     uint32_t num_swapchain_images;
     VkImage *swapchain_images;
+    VkImageView *swapchain_image_views;
 
     VkExtent2D swapchain_extent;
     VkFormat swapchain_image_format;
