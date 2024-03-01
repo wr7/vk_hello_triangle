@@ -21,6 +21,8 @@ typedef struct {
     VkPipeline pipeline;
     VkPipelineLayout pipeline_layout;
 
+    VkFramebuffer *frame_buffers;
+
     // Swapchain stuff //
 
     uint32_t num_swapchain_images;

@@ -27,6 +27,7 @@ project_source_files = [
   'src/util.c',
   'src/vulkan_setup.c',
   'src/vulkan_setup/device.c',
+  'src/vulkan_setup/framebuffers.c',
   'src/vulkan_setup/graphics_card.c',
   'src/vulkan_setup/images.c',
   'src/vulkan_setup/pipeline.c',

@@ -16,6 +16,7 @@
 #include "vulkan_setup/queues.h"
 #include "vulkan_setup/render_pass.h"
 #include "vulkan_setup/swapchain.h"
+#include "vulkan_setup/framebuffers.h"
 
 #ifdef NDEBUG
 const bool ENABLE_VALIDATION_LAYERS = false;
@@ -43,11 +44,13 @@ VulkanState VulkanState_create(GLFWwindow *window) {
 
     s.render_pass = createRenderPass(&s);
     s.pipeline = createGraphicsPipeline(&s, &s.pipeline_layout);
+    s.frame_buffers = createFramebuffers(&s);
 
     return s;
 }
 
 void VulkanState_destroy(VulkanState s) {
+    destroyFramebuffers(&s, s.frame_buffers);
     vkDestroyPipeline(s.device, s.pipeline, NULL);
     vkDestroyPipelineLayout(s.device, s.pipeline_layout, NULL);
     vkDestroyRenderPass(s.device, s.render_pass, NULL);
