@@ -1,6 +1,6 @@
 project('vulkanhello', 'c',
   version : '0.1',
-  default_options : ['warning_level=3'])
+  default_options : ['warning_level=3', 'optimization=1'])
 
 glslc_prog = find_program('glslc')
 xxd_prog = find_program('xxd')
