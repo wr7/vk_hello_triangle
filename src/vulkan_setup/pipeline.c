@@ -7,8 +7,11 @@
 
 // Mildly janky way to ensure that VERTEX_SHADER and FRAGMENT_SHADER are 32-bit aligned //
 __attribute__( ( aligned ( 4 ) ) )
+const unsigned char VERTEX_SHADER[] =
 #include "vertex_shader.h"
+
 __attribute__( ( aligned ( 4 ) ) )
+const unsigned char FRAGMENT_SHADER[] =
 #include "fragment_shader.h"
 
 static VkShaderModule createShaderModule(const VkDevice device, const unsigned char *const bytecode, const uint32_t code_length);

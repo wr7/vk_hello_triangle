@@ -3,15 +3,15 @@ project('vulkanhello', 'c',
   default_options : ['warning_level=3', 'optimization=1'])
 
 glslc_prog = find_program('glslc')
-xxd_prog = find_program('xxd')
+bce_prog = executable('bce', 'bce.c')
 
 glslc = generator(glslc_prog,
                 output  : '@BASENAME@.spv',
                 arguments : ['@INPUT@', '-o', '@OUTPUT@'])
 
-xxdi = generator(xxd_prog,
+bce = generator(bce_prog,
                 output  : '@BASENAME@.h',
-                arguments : ['-i', '-C', '-n', '@BASENAME@', '@INPUT@', '@OUTPUT@'])
+                arguments : ['@INPUT@', '@OUTPUT@'])
 
 vulkan = dependency('vulkan')
 glfw3 = dependency('glfw3')
@@ -37,7 +37,7 @@ project_source_files = [
 ]
 
 compiled_shaders = glslc.process(shader_source_files)
-shader_headers = xxdi.process(compiled_shaders)
+shader_headers = bce.process(compiled_shaders)
 
 include_directories = include_directories('src')
 

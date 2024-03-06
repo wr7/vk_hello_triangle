@@ -5,7 +5,6 @@ pkgs.mkShell {
     ninja
     shaderc
     pkg-config
-    vim
     gcc
     clang-tools # Can be removed but is necessary for clangd
     vulkan-loader
