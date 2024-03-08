@@ -31,6 +31,11 @@ typedef struct {
 
     VkExtent2D swapchain_extent;
     VkFormat swapchain_image_format;
+
+    // Command buffer stuff //
+
+    VkCommandBuffer command_buffer;
+    VkCommandPool command_pool;
 } VulkanState;
 
 static const char *const VALIDATION_LAYERS[] = {

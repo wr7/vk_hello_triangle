@@ -9,6 +9,7 @@
 #include "vulkan_setup.h"
 
 #include "src/util.h"
+#include "vulkan_setup/command_buffer.h"
 #include "vulkan_setup/device.h"
 #include "vulkan_setup/graphics_card.h"
 #include "vulkan_setup/images.h"
@@ -46,10 +47,14 @@ VulkanState VulkanState_create(GLFWwindow *window) {
     s.pipeline = createGraphicsPipeline(&s, &s.pipeline_layout);
     s.frame_buffers = createFramebuffers(&s);
 
+    s.command_pool = createCommandPool(&s);
+    s.command_buffer = createCommandBuffer(&s);
+
     return s;
 }
 
 void VulkanState_destroy(VulkanState s) {
+    vkDestroyCommandPool(s.device, s.command_pool, NULL);
     destroyFramebuffers(&s, s.frame_buffers);
     vkDestroyPipeline(s.device, s.pipeline, NULL);
     vkDestroyPipelineLayout(s.device, s.pipeline_layout, NULL);
