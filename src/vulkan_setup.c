@@ -50,10 +50,32 @@ VulkanState VulkanState_create(GLFWwindow *window) {
     s.command_pool = createCommandPool(&s);
     s.command_buffer = createCommandBuffer(&s);
 
+    VkSemaphoreCreateInfo semaphoreInfo = {.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,};
+    VkFenceCreateInfo fenceInfo = {
+        .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
+        .flags = VK_FENCE_CREATE_SIGNALED_BIT,
+    };
+
+    handleVkError("Failed to create semaphore", 
+        vkCreateSemaphore(s.device, &semaphoreInfo, NULL, &s.image_available_semaphore)
+    );
+    handleVkError("Failed to create semaphore", 
+        vkCreateSemaphore(s.device, &semaphoreInfo, NULL, &s.render_finished_semaphore)
+    );
+    handleVkError("Failed to create fence", 
+        vkCreateFence(s.device, &fenceInfo, NULL, &s.in_flight_fence)
+    );
+
     return s;
 }
 
 void VulkanState_destroy(VulkanState s) {
+    // Vulkan does not like it if you destroy stuff while GPU code is running //
+    vkDeviceWaitIdle(s.device);
+
+    vkDestroySemaphore(s.device, s.image_available_semaphore, NULL);
+    vkDestroySemaphore(s.device, s.render_finished_semaphore, NULL);
+    vkDestroyFence(s.device, s.in_flight_fence, NULL);
     vkDestroyCommandPool(s.device, s.command_pool, NULL);
     destroyFramebuffers(&s, s.frame_buffers);
     vkDestroyPipeline(s.device, s.pipeline, NULL);

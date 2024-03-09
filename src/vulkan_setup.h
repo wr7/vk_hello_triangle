@@ -36,6 +36,12 @@ typedef struct {
 
     VkCommandBuffer command_buffer;
     VkCommandPool command_pool;
+
+    // Synchronization stuff //
+
+    VkSemaphore image_available_semaphore;
+    VkSemaphore render_finished_semaphore;
+    VkFence in_flight_fence;
 } VulkanState;
 
 static const char *const VALIDATION_LAYERS[] = {

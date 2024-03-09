@@ -14,6 +14,16 @@ VkRenderPass createRenderPass(const VulkanState *const s) {
     colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
+    VkSubpassDependency dependency = {
+        .srcSubpass = VK_SUBPASS_EXTERNAL,
+        .dstSubpass = 0,
+        .srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        .srcAccessMask = 0,
+
+        .dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+        .dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+    };
+
     // Sub-passes and color attachment references //
     VkAttachmentReference colorAttachmentRef = {0};
     colorAttachmentRef.attachment = 0; // Corresponds to location=0 in shader
@@ -26,12 +36,18 @@ VkRenderPass createRenderPass(const VulkanState *const s) {
 
     VkRenderPass render_pass;
 
-    VkRenderPassCreateInfo renderPassInfo = {0};
-    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    renderPassInfo.attachmentCount = 1;
-    renderPassInfo.pAttachments = &colorAttachment;
-    renderPassInfo.subpassCount = 1;
-    renderPassInfo.pSubpasses = &subpass;
+    VkRenderPassCreateInfo renderPassInfo = {
+        .sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+
+        .attachmentCount = 1,
+        .pAttachments = &colorAttachment,
+
+        .subpassCount = 1,
+        .pSubpasses = &subpass,
+
+        .dependencyCount = 1,
+        .pDependencies = &dependency,
+    };
 
     handleVkError("Failed to create render pass", 
         vkCreateRenderPass(s->device, &renderPassInfo, NULL, &render_pass)
