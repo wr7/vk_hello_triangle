@@ -6,7 +6,7 @@ glslc_prog = find_program('glslc')
 bce_prog = executable('bce', 'bce.c')
 
 glslc = generator(glslc_prog,
-                output  : '@BASENAME@.spv',
+                output  : '@PLAINNAME@.spv',
                 arguments : ['@INPUT@', '-o', '@OUTPUT@'])
 
 bce = generator(bce_prog,
@@ -17,8 +17,8 @@ vulkan = dependency('vulkan')
 glfw3 = dependency('glfw3')
 
 shader_source_files = [
-  'src/vertex_shader.vert',
-  'src/fragment_shader.frag'
+  'src/shader.vert',
+  'src/shader.frag'
 ]
 
 project_source_files = [
