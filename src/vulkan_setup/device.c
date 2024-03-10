@@ -20,28 +20,28 @@ VkDevice createLogicalDevice(VkPhysicalDevice graphics_card, const QueueFamilyIn
         unique_index.present;
         unique_index = QueueFamilyIndices_next_unique_index(indices, unique_index)
     ) {
-        VkDeviceQueueCreateInfo queue_create_info = {0};
-        queue_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-        queue_create_info.queueFamilyIndex = unique_index.value;
-        queue_create_info.queueCount = 1;
-        queue_create_info.pQueuePriorities = &queue_priority;
-        queue_create_infos[i] = queue_create_info;
-
+        queue_create_infos[i] = (VkDeviceQueueCreateInfo){
+            .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+            .queueFamilyIndex = unique_index.value,
+            .queueCount = 1,
+            .pQueuePriorities = &queue_priority,
+        };
         i++;
     }
 
     VkPhysicalDeviceFeatures deviceFeatures = {0};
 
-    VkDeviceCreateInfo createInfo = {0};
-    createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    VkDeviceCreateInfo createInfo = {
+        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 
-    createInfo.pQueueCreateInfos = queue_create_infos;
-    createInfo.queueCreateInfoCount = num_unique_queues;
+        .pQueueCreateInfos = queue_create_infos,
+        .queueCreateInfoCount = num_unique_queues,
 
-    createInfo.pEnabledFeatures = &deviceFeatures;
+        .pEnabledFeatures = &deviceFeatures,
 
-    createInfo.enabledExtensionCount = NUM_REQUIRED_EXTENTIONS;
-    createInfo.ppEnabledExtensionNames = REQUIRED_EXTENTIONS;
+        .enabledExtensionCount = NUM_REQUIRED_EXTENTIONS,
+        .ppEnabledExtensionNames = REQUIRED_EXTENTIONS,
+    };
 
     if (ENABLE_VALIDATION_LAYERS) {
         createInfo.enabledLayerCount = ARRAY_LENGTH(VALIDATION_LAYERS);

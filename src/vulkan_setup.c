@@ -6,6 +6,7 @@
 #include <vulkan/vk_enum_string_helper.h>
 #include <vulkan/vulkan_core.h>
 
+#include "GLFW/glfw3.h"
 #include "vulkan_setup.h"
 
 #include "src/util.h"
@@ -18,6 +19,7 @@
 #include "vulkan_setup/render_pass.h"
 #include "vulkan_setup/swapchain.h"
 #include "vulkan_setup/framebuffers.h"
+#include "vulkan_setup/synchronization.h"
 
 #ifdef NDEBUG
 const bool ENABLE_VALIDATION_LAYERS = false;
@@ -39,7 +41,7 @@ VulkanState VulkanState_create(GLFWwindow *window) {
     s.queues = Queues_create(s.device, &s.indices);
 
     s.swapchain = createSwapchain(&s, &s.swapchain_extent, &s.swapchain_image_format, window);
-    getSwapchainImages(&s, &s.num_swapchain_images, &s.swapchain_images);
+    s.swapchain_images = getSwapchainImages(&s, &s.num_swapchain_images);
 
     s.swapchain_image_views = createSwapchainImageViews(&s);
 
@@ -50,21 +52,9 @@ VulkanState VulkanState_create(GLFWwindow *window) {
     s.command_pool = createCommandPool(&s);
     s.command_buffer = createCommandBuffer(&s);
 
-    VkSemaphoreCreateInfo semaphoreInfo = {.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,};
-    VkFenceCreateInfo fenceInfo = {
-        .sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-        .flags = VK_FENCE_CREATE_SIGNALED_BIT,
-    };
-
-    handleVkError("Failed to create semaphore", 
-        vkCreateSemaphore(s.device, &semaphoreInfo, NULL, &s.image_available_semaphore)
-    );
-    handleVkError("Failed to create semaphore", 
-        vkCreateSemaphore(s.device, &semaphoreInfo, NULL, &s.render_finished_semaphore)
-    );
-    handleVkError("Failed to create fence", 
-        vkCreateFence(s.device, &fenceInfo, NULL, &s.in_flight_fence)
-    );
+    s.image_available_semaphore = createSemaphore(&s);
+    s.render_finished_semaphore = createSemaphore(&s);
+    s.in_flight_fence = createFence(&s);
 
     return s;
 }
@@ -90,36 +80,34 @@ void VulkanState_destroy(VulkanState s) {
 }
 
 static VkInstance createVulkanInstance(void) {
-    VkApplicationInfo appInfo = {0};
-    appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-    appInfo.pApplicationName = "Hello Triangle";
-    appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.pEngineName = "No Engine";
-    appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.apiVersion = VK_API_VERSION_1_0;
+    VkApplicationInfo app_info = {
+        .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 
-    VkInstanceCreateInfo createInfo = {0};
-    createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-    createInfo.pApplicationInfo = &appInfo;
+        .pApplicationName = "Hello Triangle",
+        .applicationVersion = VK_MAKE_VERSION(1, 0, 0),
+        .pEngineName = "No Engine",
+        .engineVersion = VK_MAKE_VERSION(1, 0, 0),
+        .apiVersion = VK_API_VERSION_1_0,
+    };
 
-    uint32_t glfwExtensionCount = 0;
-    const char** glfwExtensions;
+    VkInstanceCreateInfo create_info = {
+        .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 
-    glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+        .pApplicationInfo = &app_info,
 
-    createInfo.enabledExtensionCount = glfwExtensionCount;
-    createInfo.ppEnabledExtensionNames = glfwExtensions;
-    
+        .ppEnabledExtensionNames = glfwGetRequiredInstanceExtensions(&create_info.enabledExtensionCount),
+    };
+
     if(ENABLE_VALIDATION_LAYERS) {
-        createInfo.enabledLayerCount = ARRAY_LENGTH(VALIDATION_LAYERS);
-        createInfo.ppEnabledLayerNames = VALIDATION_LAYERS;
+        create_info.enabledLayerCount = ARRAY_LENGTH(VALIDATION_LAYERS);
+        create_info.ppEnabledLayerNames = VALIDATION_LAYERS;
     } else {
-        createInfo.enabledLayerCount = 0;
+        create_info.enabledLayerCount = 0;
     }
 
     VkInstance instance = NULL;
 
-    VkResult result = vkCreateInstance(&createInfo, NULL, &instance);
+    VkResult result = vkCreateInstance(&create_info, NULL, &instance);
     handleVkError("Failed to initialize vulkan", result);
 
     return instance;

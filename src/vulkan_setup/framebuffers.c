@@ -9,14 +9,15 @@ VkFramebuffer *createFramebuffers(const VulkanState *const s) {
             s->swapchain_image_views[i]
         };
 
-        VkFramebufferCreateInfo framebufferInfo = {0};
-        framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-        framebufferInfo.renderPass = s->render_pass;
-        framebufferInfo.attachmentCount = 1;
-        framebufferInfo.pAttachments = attachments;
-        framebufferInfo.width = s->swapchain_extent.width;
-        framebufferInfo.height = s->swapchain_extent.height;
-        framebufferInfo.layers = 1;
+        VkFramebufferCreateInfo framebufferInfo = {
+            .sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+            .renderPass = s->render_pass,
+            .attachmentCount = 1,
+            .pAttachments = attachments,
+            .width = s->swapchain_extent.width,
+            .height = s->swapchain_extent.height,
+            .layers = 1,
+        };
 
         handleVkError("Failed to create frame buffer", 
             vkCreateFramebuffer(s->device, &framebufferInfo, NULL, &frame_buffers[i])

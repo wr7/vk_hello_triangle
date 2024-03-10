@@ -4,15 +4,16 @@
 #include "render_pass.h"
 
 VkRenderPass createRenderPass(const VulkanState *const s) {
-    VkAttachmentDescription colorAttachment = {0};
-    colorAttachment.format = s->swapchain_image_format;
-    colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-    colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-    colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-    colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    VkAttachmentDescription colorAttachment = {
+        .format = s->swapchain_image_format,
+        .samples = VK_SAMPLE_COUNT_1_BIT,
+        .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+        .storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+        .stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+        .stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+        .initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+        .finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+    };
 
     VkSubpassDependency dependency = {
         .srcSubpass = VK_SUBPASS_EXTERNAL,
@@ -25,14 +26,16 @@ VkRenderPass createRenderPass(const VulkanState *const s) {
     };
 
     // Sub-passes and color attachment references //
-    VkAttachmentReference colorAttachmentRef = {0};
-    colorAttachmentRef.attachment = 0; // Corresponds to location=0 in shader
-    colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    VkAttachmentReference colorAttachmentRef = {
+        .attachment = 0, // Corresponds to location=0 in shader
+        .layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+    };
 
-    VkSubpassDescription subpass = {0};
-    subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-    subpass.colorAttachmentCount = 1;
-    subpass.pColorAttachments = &colorAttachmentRef;
+    VkSubpassDescription subpass = {
+        .pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+        .colorAttachmentCount = 1,
+        .pColorAttachments = &colorAttachmentRef,
+    };
 
     VkRenderPass render_pass;
 

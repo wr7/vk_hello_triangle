@@ -15,16 +15,15 @@ const uint32_t WINDOW_HEIGHT = 600;
 static void draw_frame(const MainWindow *const w);
 
 MainWindow MainWindow_create(void) {
-    MainWindow w = {0};
-
     glfwInit();
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    w.window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Vulkan Window", NULL, NULL);
-
-    w.vk_state = VulkanState_create(w.window);
+    MainWindow w = {
+        .window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Vulkan Window", NULL, NULL),
+        .vk_state = VulkanState_create(w.window),
+    };
 
     return w;
 }

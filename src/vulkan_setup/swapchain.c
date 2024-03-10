@@ -25,16 +25,23 @@ VkSwapchainKHR createSwapchain(const VulkanState *const s, VkExtent2D *o_swapcha
         image_count = details.capabilities.maxImageCount;
     }
 
-    VkSwapchainCreateInfoKHR createInfo = {0};
-    createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-    createInfo.surface = s->window_surface;
+    VkSwapchainCreateInfoKHR createInfo = {
+        .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+        .surface = s->window_surface,
 
-    createInfo.minImageCount = image_count;
-    createInfo.imageFormat = surfaceFormat.format;
-    createInfo.imageColorSpace = surfaceFormat.colorSpace;
-    createInfo.imageExtent = extent;
-    createInfo.imageArrayLayers = 1;
-    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        .minImageCount = image_count,
+        .imageFormat = surfaceFormat.format,
+        .imageColorSpace = surfaceFormat.colorSpace,
+        .imageExtent = extent,
+        .imageArrayLayers = 1,
+        .imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+
+        .preTransform = details.capabilities.currentTransform,
+        .compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+        .presentMode = presentMode,
+        .clipped = VK_TRUE,
+        .oldSwapchain = VK_NULL_HANDLE,
+    };
 
     uint32_t needed_indices[] = {s->indices.graphics_family.value, s->indices.presentation_family.value};
 
@@ -47,12 +54,6 @@ VkSwapchainKHR createSwapchain(const VulkanState *const s, VkExtent2D *o_swapcha
         createInfo.queueFamilyIndexCount = 0; // Optional
         createInfo.pQueueFamilyIndices = NULL; // Optional
     }
-
-    createInfo.preTransform = details.capabilities.currentTransform;
-    createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-    createInfo.presentMode = presentMode;
-    createInfo.clipped = VK_TRUE;
-    createInfo.oldSwapchain = VK_NULL_HANDLE;
 
     VkSwapchainKHR swapchain;
     handleVkError("Failed to create swapchain", vkCreateSwapchainKHR(s->device, &createInfo, NULL, &swapchain));
