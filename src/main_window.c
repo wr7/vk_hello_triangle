@@ -20,8 +20,10 @@ MainWindow MainWindow_create(void) {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
+    GLFWwindow *window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Vulkan Window", NULL, NULL);
+
     MainWindow w = {
-        .window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Vulkan Window", NULL, NULL),
+        .window = window,
         .vk_state = VulkanState_create(w.window),
     };
 
