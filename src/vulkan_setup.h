@@ -1,10 +1,19 @@
 #pragma once
 
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+
 #include "vulkan_setup/queues.h"
 #include <stdbool.h>
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+typedef struct {
+    VkCommandBuffer buffer;
+
+    VkSemaphore image_available_semaphore;
+    VkSemaphore render_finished_semaphore;
+    VkFence in_flight_fence;
+} CommandBufferInfo;
+
 
 typedef struct {
     VkInstance instance;
@@ -34,14 +43,10 @@ typedef struct {
 
     // Command buffer stuff //
 
-    VkCommandBuffer command_buffer;
     VkCommandPool command_pool;
+    CommandBufferInfo command_buffer_infos[2];
 
-    // Synchronization stuff //
-
-    VkSemaphore image_available_semaphore;
-    VkSemaphore render_finished_semaphore;
-    VkFence in_flight_fence;
+    uint32_t current_command_buffer_info;
 } VulkanState;
 
 static const char *const VALIDATION_LAYERS[] = {

@@ -50,11 +50,12 @@ VulkanState VulkanState_create(GLFWwindow *window) {
     s.frame_buffers = createFramebuffers(&s);
 
     s.command_pool = createCommandPool(&s);
-    s.command_buffer = createCommandBuffer(&s);
 
-    s.image_available_semaphore = createSemaphore(&s);
-    s.render_finished_semaphore = createSemaphore(&s);
-    s.in_flight_fence = createFence(&s);
+    for(uint32_t i = 0; i < ARRAY_LENGTH(s.command_buffer_infos); i++) {
+        s.command_buffer_infos[i] = CommandBufferInfo_create(&s);
+    }
+
+    s.current_command_buffer_info = 0;
 
     return s;
 }
@@ -63,9 +64,14 @@ void VulkanState_destroy(VulkanState s) {
     // Vulkan does not like it if you destroy stuff while GPU code is running //
     vkDeviceWaitIdle(s.device);
 
-    vkDestroySemaphore(s.device, s.image_available_semaphore, NULL);
-    vkDestroySemaphore(s.device, s.render_finished_semaphore, NULL);
-    vkDestroyFence(s.device, s.in_flight_fence, NULL);
+    for(uint32_t i = 0; i < ARRAY_LENGTH(s.command_buffer_infos); i++) {
+        const CommandBufferInfo *const info = &s.command_buffer_infos[i];
+
+        vkDestroySemaphore(s.device, info->image_available_semaphore, NULL);
+        vkDestroySemaphore(s.device, info->render_finished_semaphore, NULL);
+        vkDestroyFence(s.device, info->in_flight_fence, NULL);
+    }
+
     vkDestroyCommandPool(s.device, s.command_pool, NULL);
     destroyFramebuffers(&s, s.frame_buffers);
     vkDestroyPipeline(s.device, s.pipeline, NULL);

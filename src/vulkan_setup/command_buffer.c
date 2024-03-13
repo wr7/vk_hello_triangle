@@ -2,6 +2,7 @@
 #include "util.h"
 #include "vulkan/vulkan_core.h"
 #include "vulkan_setup.h"
+#include "vulkan_setup/synchronization.h"
 
 VkCommandPool createCommandPool(const VulkanState *const s) {
     VkCommandPoolCreateInfo poolInfo = {
@@ -19,24 +20,9 @@ VkCommandPool createCommandPool(const VulkanState *const s) {
     return pool;
 }
 
-VkCommandBuffer createCommandBuffer(const VulkanState *const s) {
-    VkCommandBufferAllocateInfo allocInfo = {
-        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-        .commandPool = s->command_pool,
-        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-        .commandBufferCount = 1,
-    };
+void recordCommandBuffer(const VulkanState *const s, const uint32_t imageIndex) {
+    const VkCommandBuffer command_buffer = s->command_buffer_infos[s->current_command_buffer_info].buffer;
 
-    VkCommandBuffer command_buffer;
-
-    handleVkError("Failed to create command buffer", 
-        vkAllocateCommandBuffers(s->device, &allocInfo, &command_buffer)
-    );
-
-    return command_buffer;
-}
-
-void recordCommandBuffer(const VulkanState *const s, uint32_t imageIndex) {
     VkCommandBufferBeginInfo beginInfo = {
         .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
         .flags = 0, // Optional
@@ -44,7 +30,7 @@ void recordCommandBuffer(const VulkanState *const s, uint32_t imageIndex) {
     };
 
     handleVkError("Failed to record command buffer", 
-        vkBeginCommandBuffer(s->command_buffer, &beginInfo)
+        vkBeginCommandBuffer(command_buffer, &beginInfo)
     );
 
     VkRenderPassBeginInfo renderPassInfo = {
@@ -59,8 +45,8 @@ void recordCommandBuffer(const VulkanState *const s, uint32_t imageIndex) {
         .pClearValues = &(VkClearValue){{{0.0f, 0.0f, 0.0f, 1.0f}}},
     };
 
-    vkCmdBeginRenderPass(s->command_buffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-    vkCmdBindPipeline(s->command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, s->pipeline);
+    vkCmdBeginRenderPass(command_buffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, s->pipeline);
 
     VkViewport viewport = {
         .x = 0.0f,
@@ -71,15 +57,43 @@ void recordCommandBuffer(const VulkanState *const s, uint32_t imageIndex) {
         .maxDepth = 1.0f,
     };
 
-    vkCmdSetViewport(s->command_buffer, 0, 1, &viewport);
+    vkCmdSetViewport(command_buffer, 0, 1, &viewport);
 
     VkRect2D scissor = {.offset = (VkOffset2D){0, 0},.extent = s->swapchain_extent};
-    vkCmdSetScissor(s->command_buffer, 0, 1, &scissor);
+    vkCmdSetScissor(command_buffer, 0, 1, &scissor);
 
-    vkCmdDraw(s->command_buffer, 3, 1, 0, 0);
-    vkCmdEndRenderPass(s->command_buffer);
+    vkCmdDraw(command_buffer, 3, 1, 0, 0);
+    vkCmdEndRenderPass(command_buffer);
 
     handleVkError("Failed to record command buffer",
-        vkEndCommandBuffer(s->command_buffer)
+        vkEndCommandBuffer(command_buffer)
     );
+}
+
+static VkCommandBuffer createCommandBuffer(const VulkanState *const s);
+
+CommandBufferInfo CommandBufferInfo_create(const VulkanState *const s) {
+    return (CommandBufferInfo) {
+        .buffer = createCommandBuffer(s),
+        .render_finished_semaphore = createSemaphore(s),
+        .image_available_semaphore = createSemaphore(s),
+        .in_flight_fence = createFence(s),
+    };
+}
+
+static VkCommandBuffer createCommandBuffer(const VulkanState *const s) {
+    VkCommandBufferAllocateInfo allocInfo = {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+        .commandPool = s->command_pool,
+        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+        .commandBufferCount = 1,
+    };
+
+    VkCommandBuffer command_buffer;
+
+    handleVkError("Failed to create command buffer", 
+        vkAllocateCommandBuffers(s->device, &allocInfo, &command_buffer)
+    );
+
+    return command_buffer;
 }
