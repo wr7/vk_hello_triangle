@@ -21,7 +21,8 @@ OptionalU32 OptionalU32_of(uint32_t val) {
 }
 
 void handleVkError(const char *const msg, VkResult result) {
-    if(result != VK_SUCCESS) {
+    // Positive VkResult values are still successful
+    if(result < VK_SUCCESS) {
         fprintf(stderr, "%s: %s\n", msg, string_VkResult(result));
         exit(result);
     }

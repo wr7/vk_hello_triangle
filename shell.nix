@@ -12,5 +12,6 @@ pkgs.mkShell {
     vulkan-utility-libraries
     vulkan-headers
     glfw
+    gdb
   ];
 }

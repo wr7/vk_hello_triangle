@@ -8,6 +8,7 @@
 #include <GLFW/glfw3.h>
 
 #define ARRAY_LENGTH(arr) (sizeof(arr)/sizeof(arr[0]))
+#define UNUSED(val) (void) val
 
 typedef struct {
     uint32_t value;

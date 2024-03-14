@@ -7,10 +7,12 @@
 struct MainWindow {
     GLFWwindow *window;
     VulkanState vk_state;
+
+    bool window_resized;
 };
 
 typedef struct MainWindow MainWindow;
 
-MainWindow MainWindow_create(void);
+MainWindow *MainWindow_create(void);
 void MainWindow_run(MainWindow *w);
 void MainWindow_destroy(MainWindow *w);
