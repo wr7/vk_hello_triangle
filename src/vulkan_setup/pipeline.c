@@ -1,6 +1,7 @@
 #include <stdint.h>
 
 #include "util.h"
+#include "vulkan/vulkan_core.h"
 #include "vulkan_setup.h"
 
 #include "vulkan_setup/pipeline.h"
@@ -64,7 +65,7 @@ VkPipeline createGraphicsPipeline(const VulkanState *const s, VkPipelineLayout *
     // Input Assembly //
     VkPipelineInputAssemblyStateCreateInfo inputAssembly = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-        .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+        .topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP,
         .primitiveRestartEnable = VK_FALSE,
     };
 
