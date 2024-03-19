@@ -20,6 +20,7 @@
 #include "vulkan_setup/swapchain.h"
 #include "vulkan_setup/framebuffers.h"
 #include "vulkan_setup/synchronization.h"
+#include "vulkan_setup/vertex_buffer.h"
 
 #ifdef NDEBUG
 const bool ENABLE_VALIDATION_LAYERS = false;
@@ -49,6 +50,8 @@ VulkanState VulkanState_create(GLFWwindow *window) {
     s.pipeline = createGraphicsPipeline(&s, &s.pipeline_layout);
     s.frame_buffers = createFramebuffers(&s);
 
+    s.vertex_buffer = createVertexBuffer(&s, &s.vertex_buffer_memory);
+
     s.command_pool = createCommandPool(&s);
 
     for(uint32_t i = 0; i < ARRAY_LENGTH(s.command_buffer_infos); i++) {
@@ -73,6 +76,8 @@ void VulkanState_destroy(VulkanState s) {
     }
 
     vkDestroyCommandPool(s.device, s.command_pool, NULL);
+    vkDestroyBuffer(s.device, s.vertex_buffer, NULL);
+    vkFreeMemory(s.device, s.vertex_buffer_memory, NULL);
     destroyFramebuffers(&s, s.frame_buffers);
     vkDestroyPipeline(s.device, s.pipeline, NULL);
     vkDestroyPipelineLayout(s.device, s.pipeline_layout, NULL);

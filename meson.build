@@ -6,12 +6,12 @@ glslc_prog = find_program('glslc')
 bce_prog = executable('bce', 'bce.c')
 
 glslc = generator(glslc_prog,
-                output  : '@PLAINNAME@.spv',
-                arguments : ['@INPUT@', '-o', '@OUTPUT@'])
+  output  : '@PLAINNAME@.spv',
+  arguments : ['@INPUT@', '-o', '@OUTPUT@'])
 
 bce = generator(bce_prog,
-                output  : '@BASENAME@.h',
-                arguments : ['@INPUT@', '@OUTPUT@'])
+  output  : '@BASENAME@.h',
+  arguments : ['@INPUT@', '@OUTPUT@'])
 
 vulkan = dependency('vulkan')
 glfw3 = dependency('glfw3')
@@ -35,7 +35,8 @@ project_source_files = [
   'src/vulkan_setup/queues.c',
   'src/vulkan_setup/render_pass.c',
   'src/vulkan_setup/swapchain.c',
-  'src/vulkan_setup/synchronization.c'
+  'src/vulkan_setup/synchronization.c',
+  'src/vulkan_setup/vertex_buffer.c'
 ]
 
 compiled_shaders = glslc.process(shader_source_files)

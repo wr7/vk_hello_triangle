@@ -1,4 +1,5 @@
 #include "command_buffer.h"
+#include "main_window.h"
 #include "util.h"
 #include "vulkan/vulkan_core.h"
 #include "vulkan_setup.h"
@@ -48,6 +49,10 @@ void recordCommandBuffer(const VulkanState *const s, const uint32_t imageIndex) 
     vkCmdBeginRenderPass(command_buffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
     vkCmdBindPipeline(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, s->pipeline);
 
+    VkBuffer vertexBuffers[] = {s->vertex_buffer};
+    VkDeviceSize offsets[] = {0};
+    vkCmdBindVertexBuffers(command_buffer, 0, 1, vertexBuffers, offsets);
+
     VkViewport viewport = {
         .x = 0.0f,
         .y = 0.0f,
@@ -62,7 +67,7 @@ void recordCommandBuffer(const VulkanState *const s, const uint32_t imageIndex) 
     VkRect2D scissor = {.offset = (VkOffset2D){0, 0},.extent = s->swapchain_extent};
     vkCmdSetScissor(command_buffer, 0, 1, &scissor);
 
-    vkCmdDraw(command_buffer, 3, 1, 0, 0);
+    vkCmdDraw(command_buffer, sizeof(VERTICES), 1, 0, 0);
     vkCmdEndRenderPass(command_buffer);
 
     handleVkError("Failed to record command buffer",

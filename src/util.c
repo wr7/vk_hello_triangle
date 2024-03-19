@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdnoreturn.h>
 
 OptionalU32 OptionalU32_empty(void) {
     OptionalU32 val = {0};
@@ -39,6 +40,11 @@ void *emalloc(size_t bytes) {
     }
 
     return buf;
+}
+
+noreturn void error(const char *const msg) {
+    fprintf(stderr, "%s", msg);
+    exit(1);
 }
 
 uint32_t uint32_t_clamp(uint32_t val, uint32_t min, uint32_t max) {
