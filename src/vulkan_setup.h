@@ -33,7 +33,7 @@ typedef struct {
 
     VkFramebuffer *frame_buffers;
 
-    VkBuffer vertex_buffer;
+    VkBuffer vertex_and_index_buffer;
     VkDeviceMemory vertex_buffer_memory;
 
     // Swapchain stuff //

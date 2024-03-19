@@ -14,11 +14,14 @@
 
 #ifdef _MSC_EXTENSIONS
     #define align(n) _declspec( align ( n ) )
+    #define _typeof(n) __typeof__(n)
 #elif defined(__GNUC__)
     #define align(n) __attribute__( ( aligned ( n ) ) )
+    #define _typeof(n) __typeof__(n)
 #else
     #warning Failed to find variable alignment compiler extention. Code may fail to compile.
     #define align(n) _Pragma( STRINGIFY(align##(##n##) ) )
+    #define _typeof(n) typeof(n)
 #endif
 
 typedef struct {

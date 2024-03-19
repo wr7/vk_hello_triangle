@@ -8,20 +8,23 @@ static VkBuffer createBuffer(const VulkanState *const s, VkDeviceSize size, VkBu
 static void writeToMemory(const VulkanState *const s, VkDeviceMemory memory, const void *const src, VkDeviceSize offset, VkDeviceSize num_bytes);
 static void transferBetweenBuffers(const VulkanState *const s, VkBuffer src, VkBuffer dst, VkDeviceSize num_bytes);
 
-VkBuffer createVertexBuffer(const VulkanState *const s, VkDeviceMemory *const o_buffer_memory) {
-    VkDeviceMemory staging_memory;
-    const VkBuffer staging_buffer = createBuffer(s, sizeof(VERTICES), VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &staging_memory);
+VkBuffer createVertexAndIndexBuffer(const VulkanState *const s, VkDeviceMemory *const o_buffer_memory) {
+    UNUSED(VERTICES); UNUSED(VERTEX_INDICES); // To silence warnings in main_window.h where VERTICES_AND_INDICES lives
+    const uint32_t BUFFER_SIZE = sizeof(VERTICES_AND_INDICES);
 
-    writeToMemory(s, staging_memory, &VERTICES[0], 0, sizeof(VERTICES));
+    VkDeviceMemory staging_memory;
+    const VkBuffer staging_buffer = createBuffer(s, BUFFER_SIZE, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, &staging_memory);
+
+    writeToMemory(s, staging_memory, &VERTICES_AND_INDICES, 0, BUFFER_SIZE);
 
     const VkBuffer vertex_buffer = createBuffer(s, 
-        sizeof(VERTICES),
-        VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+        BUFFER_SIZE,
+        VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
         o_buffer_memory
     );
 
-    transferBetweenBuffers(s, staging_buffer, vertex_buffer, sizeof(VERTICES));
+    transferBetweenBuffers(s, staging_buffer, vertex_buffer, (VkDeviceSize) BUFFER_SIZE);
 
     vkDestroyBuffer(s->device, staging_buffer, NULL);
     vkFreeMemory(s->device, staging_memory, NULL);

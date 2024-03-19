@@ -53,7 +53,7 @@ VulkanState VulkanState_create(GLFWwindow *window) {
     s.command_pool = createCommandPool(&s);
     s.transient_command_pool = createTransientCommandPool(&s);
 
-    s.vertex_buffer = createVertexBuffer(&s, &s.vertex_buffer_memory);
+    s.vertex_and_index_buffer = createVertexAndIndexBuffer(&s, &s.vertex_buffer_memory);
 
     for(uint32_t i = 0; i < ARRAY_LENGTH(s.command_buffer_infos); i++) {
         s.command_buffer_infos[i] = CommandBufferInfo_create(&s);
@@ -78,7 +78,7 @@ void VulkanState_destroy(VulkanState s) {
 
     vkDestroyCommandPool(s.device, s.transient_command_pool, NULL);
     vkDestroyCommandPool(s.device, s.command_pool, NULL);
-    vkDestroyBuffer(s.device, s.vertex_buffer, NULL);
+    vkDestroyBuffer(s.device, s.vertex_and_index_buffer, NULL);
     vkFreeMemory(s.device, s.vertex_buffer_memory, NULL);
     destroyFramebuffers(&s, s.frame_buffers);
     vkDestroyPipeline(s.device, s.pipeline, NULL);
