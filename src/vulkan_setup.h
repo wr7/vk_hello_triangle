@@ -48,6 +48,7 @@ typedef struct {
     // Command buffer stuff //
 
     VkCommandPool command_pool;
+    VkCommandPool transient_command_pool;
     CommandBufferInfo command_buffer_infos[2];
 
     uint32_t current_command_buffer_info;

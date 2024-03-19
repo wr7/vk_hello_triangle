@@ -21,6 +21,21 @@ VkCommandPool createCommandPool(const VulkanState *const s) {
     return pool;
 }
 
+VkCommandPool createTransientCommandPool(const VulkanState *const s) {
+    VkCommandPoolCreateInfo pool_info = {
+        .sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+        .flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT,
+        .queueFamilyIndex = s->indices.graphics_family.value,
+    };
+
+    VkCommandPool pool;
+    handleVkError("Failed to create command pool", 
+        vkCreateCommandPool(s->device, &pool_info, NULL, &pool)
+    );
+
+    return pool;
+}
+
 void recordCommandBuffer(const VulkanState *const s, const uint32_t imageIndex) {
     const VkCommandBuffer command_buffer = s->command_buffer_infos[s->current_command_buffer_info].buffer;
 

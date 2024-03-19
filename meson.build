@@ -36,7 +36,7 @@ project_source_files = [
   'src/vulkan_setup/render_pass.c',
   'src/vulkan_setup/swapchain.c',
   'src/vulkan_setup/synchronization.c',
-  'src/vulkan_setup/vertex_buffer.c'
+  'src/vulkan_setup/buffers.c'
 ]
 
 compiled_shaders = glslc.process(shader_source_files)
