@@ -7,12 +7,11 @@
 #include "vulkan_setup/pipeline.h"
 #include "math_types.h"
 
-// Mildly janky way to ensure that VERTEX_SHADER and FRAGMENT_SHADER are 32-bit aligned //
-__attribute__( ( aligned ( 4 ) ) )
+align(4)
 const unsigned char VERTEX_SHADER[] =
 #include "shader.vert.h"
 
-__attribute__( ( aligned ( 4 ) ) )
+align(4)
 const unsigned char FRAGMENT_SHADER[] =
 #include "shader.frag.h"
 
