@@ -4,6 +4,7 @@
 #include "vulkan_setup.h"
 
 #include "vulkan_setup/pipeline.h"
+#include "math_types.h"
 
 // Mildly janky way to ensure that VERTEX_SHADER and FRAGMENT_SHADER are 32-bit aligned //
 __attribute__( ( aligned ( 4 ) ) )
@@ -40,10 +41,12 @@ VkPipeline createGraphicsPipeline(const VulkanState *const s, VkPipelineLayout *
     // Vertex info //
     VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-        .vertexBindingDescriptionCount = 0,
-        .pVertexBindingDescriptions = NULL,
-        .vertexAttributeDescriptionCount = 0,
-        .pVertexAttributeDescriptions = NULL,
+
+        .vertexBindingDescriptionCount = 1,
+        .pVertexBindingDescriptions = &Vertex_BINDING_DESCRIPTION,
+
+        .vertexAttributeDescriptionCount = ARRAY_LENGTH(Vertex_ATTRIBUTE_DESCRIPTIONS),
+        .pVertexAttributeDescriptions = &Vertex_ATTRIBUTE_DESCRIPTIONS[0],
     };
 
     // Dynamic states //
