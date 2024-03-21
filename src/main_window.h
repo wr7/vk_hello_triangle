@@ -38,18 +38,22 @@ typedef struct MainWindow MainWindow;
 
 #define VERTEX_INDICES_DEF {0, 1, 2, 3}
 
+ALLOW_UNUSED_START
+
 // Cursed
 static const Vertex VERTICES[] = VERTICES_DEF;
 static const uint16_t VERTEX_INDICES[] = VERTEX_INDICES_DEF;
 
 // Ensure that the vertex and index data are next to eachother in the compiled program //
 static const struct {
-    _typeof(VERTICES) vertices;
-    _typeof(VERTEX_INDICES) indices;
+    typeof(VERTICES) vertices;
+    typeof(VERTEX_INDICES) indices;
 } VERTICES_AND_INDICES = {VERTICES_DEF, VERTEX_INDICES_DEF,};
 
-static const VkDeviceSize VERTEX_BUFFER_OFFSET = offsetof(_typeof(VERTICES_AND_INDICES), vertices);
-static const VkDeviceSize INDEX_BUFFER_OFFSET = offsetof(_typeof(VERTICES_AND_INDICES), indices);
+ALLOW_UNUSED_END
+
+static const VkDeviceSize VERTEX_BUFFER_OFFSET = offsetof(typeof(VERTICES_AND_INDICES), vertices);
+static const VkDeviceSize INDEX_BUFFER_OFFSET = offsetof(typeof(VERTICES_AND_INDICES), indices);
 
 MainWindow *MainWindow_create(void);
 void MainWindow_run(MainWindow *w);

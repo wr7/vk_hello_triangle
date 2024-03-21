@@ -17,13 +17,13 @@ static const VkVertexInputBindingDescription Vertex_BINDING_DESCRIPTION = {
 };
 
 static const VkVertexInputAttributeDescription Vertex_ATTRIBUTE_DESCRIPTIONS[] = {
-    (VkVertexInputAttributeDescription) {
+    {
         .binding = 0,
         .location = 0,
         .format = VK_FORMAT_R32G32_SFLOAT,
         .offset = offsetof(Vertex, pos),
     },
-    (VkVertexInputAttributeDescription) {
+    {
         .binding = 0,
         .location = 1,
         .format = VK_FORMAT_R32G32B32_SFLOAT,
