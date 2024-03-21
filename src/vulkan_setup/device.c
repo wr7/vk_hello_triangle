@@ -6,6 +6,7 @@
 #include "vulkan_setup.h"
 #include "vulkan_setup/graphics_card.h"
 #include "vulkan_setup/device.h"
+#include "vulkan_setup/queues.h"
 
 VkDevice createLogicalDevice(VkPhysicalDevice graphics_card, const QueueFamilyIndices *const indices) {
     const size_t num_unique_queues = QueueFamilyIndices_num_unique_indices(indices);
@@ -15,11 +16,7 @@ VkDevice createLogicalDevice(VkPhysicalDevice graphics_card, const QueueFamilyIn
     float queue_priority = 1.0f;
 
     size_t i = 0;
-    for(
-        OptionalU32 unique_index = QueueFamilyIndices_next_unique_index(indices, OptionalU32_empty()); 
-        unique_index.present;
-        unique_index = QueueFamilyIndices_next_unique_index(indices, unique_index)
-    ) {
+    QueueFamilyIndices_foreach_unique(unique_index, indices) {
         queue_create_infos[i] = (VkDeviceQueueCreateInfo){
             .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
             .queueFamilyIndex = unique_index.value,

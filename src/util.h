@@ -28,9 +28,11 @@
 #ifdef _MSC_EXTENSIONS
     #define align(n) __declspec( align ( n ) )
     #define typeof(n) __typeof__(n)
+    #define pure
 #elif defined(__GNUC__)
     #define align(n) __attribute__( ( aligned ( n ) ) )
     #define typeof(n) __typeof__(n)
+    #define pure __attribute__( ( pure ) )
 #else
     // Align fallback (requires C11)
     #define _align1 _Alignas(char)
@@ -44,6 +46,8 @@
     #warning Failed to find typeof alignment compiler extention. Code may fail to compile.
     // C23 has the typeof operator by default
     // #define typeof(n) typeof(n)
+
+    #define pure
 #endif
 
 typedef struct {

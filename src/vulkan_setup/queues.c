@@ -19,25 +19,21 @@ Queues Queues_create(VkDevice device, const QueueFamilyIndices *const indices) {
     return queues;
 }
 
-bool QueueFamilyIndices_has_minimum_requirements(const QueueFamilyIndices *const indices) {
+pure bool QueueFamilyIndices_has_minimum_requirements(const QueueFamilyIndices *const indices) {
     return indices->graphics_family.present && indices->presentation_family.present;
 }
 
-size_t QueueFamilyIndices_num_unique_indices(const QueueFamilyIndices *const indices) {
+pure size_t QueueFamilyIndices_num_unique_indices(const QueueFamilyIndices *const indices) {
     uint32_t num_unique_indices = 0;
 
-    for(
-        OptionalU32 unique_index = QueueFamilyIndices_next_unique_index(indices, OptionalU32_empty()); 
-        unique_index.present;
-        unique_index = QueueFamilyIndices_next_unique_index(indices, unique_index)
-    ) {
+    QueueFamilyIndices_foreach_unique(family, indices) {
         num_unique_indices += 1;
     }
 
     return num_unique_indices;
 }
 
-OptionalU32 QueueFamilyIndices_next_unique_index(const QueueFamilyIndices *const indices, const OptionalU32 previous_index) {
+pure OptionalU32 QueueFamilyIndices_next_unique_index(const QueueFamilyIndices *const indices, const OptionalU32 previous_index) {
     const uint32_t num_indices = sizeof(*indices)/sizeof(OptionalU32);
     const OptionalU32 *const pindices = (OptionalU32 *) indices;
 

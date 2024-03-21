@@ -7,6 +7,15 @@
 
 #include "util.h"
 
+/**
+ * Iterates over the unique queue family indices in `indices`. Stores the current unique index in `var`.
+ */
+#define QueueFamilyIndices_foreach_unique(var, indices) \
+    for(\
+        OptionalU32 var = QueueFamilyIndices_next_unique_index(indices, OptionalU32_empty());\
+        var.present;\
+        var = QueueFamilyIndices_next_unique_index(indices, var))
+
 typedef struct {
     VkQueue graphics_queue;
     VkQueue presentation_queue;
@@ -21,7 +30,7 @@ typedef struct {
 Queues Queues_create(VkDevice device, const QueueFamilyIndices *const indices);
 
 // QueueFamilyIndices //
-size_t QueueFamilyIndices_num_unique_indices(const QueueFamilyIndices *const indices);
-OptionalU32 QueueFamilyIndices_next_unique_index(const QueueFamilyIndices *const indices, const OptionalU32 previous_index);
+pure size_t QueueFamilyIndices_num_unique_indices(const QueueFamilyIndices *const indices);
+pure OptionalU32 QueueFamilyIndices_next_unique_index(const QueueFamilyIndices *const indices, const OptionalU32 previous_index);
 
-bool QueueFamilyIndices_has_minimum_requirements(const QueueFamilyIndices *const indices);
+pure bool QueueFamilyIndices_has_minimum_requirements(const QueueFamilyIndices *const indices);
