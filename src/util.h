@@ -29,10 +29,12 @@
     #define align(n) __declspec( align ( n ) )
     #define typeof(n) __typeof__(n)
     #define pure
+    #define always_inline inline __forceinline
 #elif defined(__GNUC__)
     #define align(n) __attribute__( ( aligned ( n ) ) )
     #define typeof(n) __typeof__(n)
     #define pure __attribute__( ( pure ) )
+    #define always_inline inline __attribute__( ( always_inline ) ) 
 #else
     // Align fallback (requires C11)
     #define _align1 _Alignas(char)
@@ -48,6 +50,7 @@
     // #define typeof(n) typeof(n)
 
     #define pure
+    #define always_inline inline
 #endif
 
 typedef struct {

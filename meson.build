@@ -2,6 +2,8 @@ project('vulkanhello', 'c',
   version : '0.1',
   default_options : ['warning_level=3', 'optimization=1'])
 
+cc = meson.get_compiler('c')
+
 glslc_prog = find_program('glslc')
 bce_prog = executable('bce', 'bce.c')
 
@@ -15,6 +17,7 @@ bce = generator(bce_prog,
 
 vulkan = dependency('vulkan')
 glfw3 = dependency('glfw3')
+libm = cc.find_library('m', required : false)
 
 shader_source_files = [
   'src/shader.vert',
@@ -24,6 +27,7 @@ shader_source_files = [
 project_source_files = [
   'src/main.c',
   'src/main_window.c',
+  'src/math_types.c',
   'src/util.c',
   'src/vulkan_setup.c',
   'src/vulkan_setup/command_buffer.c',
@@ -45,4 +49,4 @@ shader_headers = bce.process(compiled_shaders)
 include_directories = include_directories('src')
 
 exe = executable('vulkanhello', project_source_files + shader_headers,
-  install : false, include_directories : include_directories, dependencies : [vulkan, glfw3])
+  install : false, include_directories : include_directories, dependencies : [vulkan, glfw3, libm])
