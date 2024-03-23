@@ -9,16 +9,11 @@
 #include <stdnoreturn.h>
 
 OptionalU32 OptionalU32_empty(void) {
-    OptionalU32 val = {0};
-    return val;
+    return (OptionalU32) {.present = false};
 }
 
 OptionalU32 OptionalU32_of(uint32_t val) {
-    OptionalU32 optional;
-    optional.present = true;
-    optional.value = val;
-
-    return optional;
+    return (OptionalU32) {.value = val, .present = true};
 }
 
 void handleVkError(const char *const msg, VkResult result) {
