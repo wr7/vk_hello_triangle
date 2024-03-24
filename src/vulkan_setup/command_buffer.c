@@ -1,5 +1,5 @@
 #include "command_buffer.h"
-#include "main_window.h"
+#include "draw.h"
 #include "util.h"
 #include "vulkan/vulkan_core.h"
 #include "vulkan_setup.h"
@@ -85,6 +85,7 @@ void recordCommandBuffer(const VulkanState *const s, const uint32_t imageIndex) 
     VkRect2D scissor = {.offset = (VkOffset2D){0, 0},.extent = s->swapchain_extent};
     vkCmdSetScissor(command_buffer, 0, 1, &scissor);
 
+    vkCmdBindDescriptorSets(command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, s->pipeline_layout, 0, 1, &s->descriptor_sets[s->current_command_buffer_info], 0, NULL);
     vkCmdDrawIndexed(command_buffer, ARRAY_LENGTH(VERTEX_INDICES), 1, 0, 0, 0);
     vkCmdEndRenderPass(command_buffer);
 

@@ -1,3 +1,5 @@
+#include "draw.h"
+#include "math_types.h"
 #include "string.h"
 #include "vulkan/vulkan_core.h"
 #include "vulkan_setup.h"
@@ -30,6 +32,29 @@ VkBuffer createVertexAndIndexBuffer(const VulkanState *const s, VkDeviceMemory *
     vkFreeMemory(s->device, staging_memory, NULL);
 
     return vertex_buffer;
+}
+
+// TODO: do not use VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+// TODO: UMA support
+VkBuffer createUniformBuffer(const VulkanState *const s, VkDeviceMemory *const o_buffer_memory, UniformBufferObject (**const o_mapped_memory)[FRAMES_IN_FLIGHT]) {
+    const VkDeviceSize BUFFER_SIZE = sizeof(**o_mapped_memory);
+
+    VkBuffer uniform_buffer = createBuffer(s, 
+        BUFFER_SIZE, 
+        VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 
+        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+        o_buffer_memory
+    );
+
+    vkMapMemory(s->device, *o_buffer_memory, 0, BUFFER_SIZE, 0, (void **const) o_mapped_memory);
+
+    return uniform_buffer;
+}
+
+void destroyUniformBuffer(const VulkanState *const s) {
+    vkUnmapMemory(s->device, s->uniform_buffer_memory);
+    vkDestroyBuffer(s->device, s->uniform_buffer, NULL);
+    vkFreeMemory(s->device, s->uniform_buffer_memory, NULL);
 }
 
 static void transferBetweenBuffers(const VulkanState *const s, VkBuffer src, VkBuffer dst, VkDeviceSize num_bytes) {

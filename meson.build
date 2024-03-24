@@ -1,6 +1,6 @@
 project('vulkanhello', 'c',
   version : '0.1',
-  default_options : ['warning_level=3', 'optimization=1'])
+  default_options : ['warning_level=3', 'c_std=c2x', 'optimization=1'])
 
 cc = meson.get_compiler('c')
 
@@ -25,12 +25,14 @@ shader_source_files = [
 ]
 
 project_source_files = [
+  'src/draw.c',
   'src/main.c',
   'src/main_window.c',
   'src/math_types.c',
   'src/util.c',
   'src/vulkan_setup.c',
   'src/vulkan_setup/command_buffer.c',
+  'src/vulkan_setup/descriptor_sets.c',
   'src/vulkan_setup/device.c',
   'src/vulkan_setup/framebuffers.c',
   'src/vulkan_setup/graphics_card.c',

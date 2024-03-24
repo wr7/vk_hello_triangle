@@ -1,5 +1,6 @@
 #pragma once
 
+#include "math_types.h"
 #include "vulkan/vulkan_core.h"
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -15,6 +16,7 @@ typedef struct {
     VkFence in_flight_fence;
 } CommandBufferInfo;
 
+#define FRAMES_IN_FLIGHT 2
 
 typedef struct {
     VkInstance instance;
@@ -36,6 +38,17 @@ typedef struct {
     VkBuffer vertex_and_index_buffer;
     VkDeviceMemory vertex_buffer_memory;
 
+    // Uniform buffer stuff //
+    VkDescriptorPool descriptor_pool;
+    VkDescriptorSet descriptor_sets[FRAMES_IN_FLIGHT];
+
+    VkDescriptorSetLayout descriptor_set_layout;
+
+    VkBuffer uniform_buffer;
+    VkDeviceMemory uniform_buffer_memory;
+
+    UniformBufferObject (*mapped_uniform_buffer_memory)[FRAMES_IN_FLIGHT];
+
     // Swapchain stuff //
 
     uint32_t num_swapchain_images;
@@ -49,7 +62,7 @@ typedef struct {
 
     VkCommandPool command_pool;
     VkCommandPool transient_command_pool;
-    CommandBufferInfo command_buffer_infos[2];
+    CommandBufferInfo command_buffer_infos[FRAMES_IN_FLIGHT];
 
     uint32_t current_command_buffer_info;
 } VulkanState;

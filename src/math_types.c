@@ -13,6 +13,15 @@ static always_inline pure Mat4 Mat4_transpose_inline(const Mat4 m) {
     }};
 }
 
+pure Mat4 Mat4_identity() {
+    return (Mat4) {{
+        {{1, 0, 0, 0}},
+        {{0, 1, 0, 0}},
+        {{0, 0, 1, 0}},
+        {{0, 0, 0, 1}},
+    }};
+}
+
 pure Vec4 Mat4_apply(const Mat4 matrix, const Vec4 vector) {
     const float (*const m)[4] = &matrix.columns[0].entries;
     const float *const v = &vector.entries[0];

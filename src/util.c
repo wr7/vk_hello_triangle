@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <vulkan/vk_enum_string_helper.h>
 
+#include <math.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,4 +51,8 @@ uint32_t uint32_t_clamp(uint32_t val, uint32_t min, uint32_t max) {
     } else {
         return val;
     }
+}
+
+pure float radians(const float degrees) {
+    return PI * degrees / 180.0;
 }

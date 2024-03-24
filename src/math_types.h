@@ -8,11 +8,6 @@
 #include "util.h"
 
 typedef struct {
-    float pos[2];
-    float color[3];
-} Vertex;
-
-typedef struct {
     float entries[4];
 } Vec4;
 
@@ -23,6 +18,17 @@ typedef struct {
 typedef struct {
     Vec4 columns[4];
 } Mat4;
+
+typedef struct {
+    Mat4 model;
+    Mat4 view;
+    Mat4 proj;
+} UniformBufferObject;
+
+typedef struct {
+    float pos[2];
+    float color[3];
+} Vertex;
 
 static const VkVertexInputBindingDescription Vertex_BINDING_DESCRIPTION = {
     .binding = 0,
@@ -44,6 +50,8 @@ static const VkVertexInputAttributeDescription Vertex_ATTRIBUTE_DESCRIPTIONS[] =
         .offset = offsetof(Vertex, color),
     },
 };
+
+pure Mat4 Mat4_identity();
 
 pure Vec4 Mat4_apply(const Mat4 matrix, const Vec4 vector);
 

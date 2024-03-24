@@ -21,7 +21,9 @@
 
 // Utility macros //
 
-#define ARRAY_LENGTH(arr) (sizeof(arr)/sizeof(arr[0]))
+# define PI 3.14159265358979323846
+
+#define ARRAY_LENGTH(arr) (sizeof(arr)/sizeof((arr)[0]))
 #define UNUSED(val) (void) val
 #define STRINGIFY(a) #a
 
@@ -68,3 +70,4 @@ void *emalloc(size_t bytes);
 noreturn void error(const char *const msg);
 
 uint32_t uint32_t_clamp(uint32_t min, uint32_t val, uint32_t max);
+pure float radians(const float degrees);
