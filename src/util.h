@@ -21,7 +21,7 @@
 
 // Utility macros //
 
-# define PI 3.14159265358979323846
+#define PI 3.14159265358979323846
 
 #define ARRAY_LENGTH(arr) (sizeof(arr)/sizeof((arr)[0]))
 #define UNUSED(val) (void) val
@@ -41,10 +41,7 @@
     // Align fallback (requires C11)
     #define align(n) _Alignas(n)
 
-    // Typeof fallback (requires C23)
-    #warning Failed to find typeof alignment compiler extention. Code may fail to compile.
     // C23 has the typeof operator by default
-    // #define typeof(n) typeof(n)
 
     #define pure
     #define always_inline inline
