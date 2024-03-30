@@ -20,8 +20,11 @@ typedef struct {
 } Mat4;
 
 typedef struct {
+    align(16)
     Mat4 model;
+    align(16)
     Mat4 view;
+    align(16)
     Mat4 proj;
 } UniformBufferObject;
 
