@@ -95,10 +95,13 @@ static void updateUniformBuffer(const VulkanState *const s, UniformBufferObject 
     // Get time in deciseconds
     const uint64_t time = raw_time / ( CLOCKS_PER_SEC/100 );
 
-    const double model_roll = fmodf(time / 100.0, 2.0*PI);
-    const double model_y_offset = sin(time/32.0)*0.1;
+    const double rotm = 1/2.0;
+    const double model_yaw = fmodf(time / (rotm*100.0), 2.0*PI);
+    const double model_pitch = fmodf(time / (rotm*130.0), 2.0*PI);
+    const double model_roll = fmodf(time / (rotm*145.0), 2.0*PI);
+    const double model_y_offset = sin(time/32.0)*0.3;
 
-    ubo->model = Mat4_yaw_pitch_roll_translate(0, radians(-90), model_roll, (Vec3) {{0, model_y_offset-0.25, 1.2}});
+    ubo->model = Mat4_yaw_pitch_roll_translate(model_yaw, model_pitch, model_roll, (Vec3) {{0, model_y_offset, 2}});
     ubo->view = Mat4_identity();
     ubo->proj = Mat4_perspective(radians(45), ((float) s->swapchain_extent.width)/s->swapchain_extent.height, 0.1f, 10.0f);
 }

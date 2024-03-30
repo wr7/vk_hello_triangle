@@ -26,7 +26,7 @@ typedef struct {
 } UniformBufferObject;
 
 typedef struct {
-    float pos[2];
+    float pos[3];
     float color[3];
 } Vertex;
 
@@ -40,7 +40,7 @@ static const VkVertexInputAttributeDescription Vertex_ATTRIBUTE_DESCRIPTIONS[] =
     {
         .binding = 0,
         .location = 0,
-        .format = VK_FORMAT_R32G32_SFLOAT,
+        .format = VK_FORMAT_R32G32B32_SFLOAT,
         .offset = offsetof(Vertex, pos),
     },
     {

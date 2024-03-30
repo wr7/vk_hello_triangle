@@ -15,6 +15,7 @@
       vulkan-headers
       glfw
       gdb
+      renderdoc
     ];
   };
 }
