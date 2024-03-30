@@ -39,12 +39,7 @@
     #define always_inline inline __attribute__( ( always_inline ) ) 
 #else
     // Align fallback (requires C11)
-    #define _align1 _Alignas(char)
-    #define _align2 _Alignas(short)
-    #define _align4 _Alignas(int)
-    #define _align8 _Alignas(long)
-    #define _align16 _Alignas(long long)
-    #define align(n) _align##n
+    #define align(n) _Alignas(n)
 
     // Typeof fallback (requires C23)
     #warning Failed to find typeof alignment compiler extention. Code may fail to compile.
