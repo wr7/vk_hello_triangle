@@ -27,22 +27,51 @@
 #define UNUSED(val) (void) val
 #define STRINGIFY(a) #a
 
+#ifndef __has_attribute
+    #define __has_attribute(x) 0
+#endif
+
 #ifdef _MSC_EXTENSIONS
     #define align(n) __declspec( align ( n ) )
     #define typeof(n) __typeof__(n)
     #define pure
     #define always_inline inline __forceinline
 #elif defined(__GNUC__)
-    #define align(n) __attribute__( ( aligned ( n ) ) )
+    #if ( __has_attribute ( align ) )
+        #define align(n) __attribute__( ( aligned ( n ) ) )
+    #endif
+
     #define typeof(n) __typeof__(n)
-    #define pure __attribute__( ( pure ) )
-    #define always_inline inline __attribute__( ( always_inline ) ) 
+
+    #if ( __has_attribute ( pure ) )
+        #define pure __attribute__( ( pure ) )
+    #else
+        #define pure
+    #endif
+
+    #if ( __has_attribute ( always_inline ) )
+        #define always_inline inline __attribute__( ( always_inline ) ) 
+    #else
+        #define always_inline inline
+    #endif
+#endif
+
+#if (__STDC_VERSION__ >= 201112L)
+    #undef align
+    #define align(x) _Alignas(x)
+#elif ( !defined(align) )
+    #error "Failed to find proper alignas implementation"
+#endif
+
+#if (__STDC_VERSION__ <= 201710L)
+    #ifndef typeof
+        #error "Failed to find proper typeof implementation; C23 or compiler extention required"
+    #endif
 #else
-    // Align fallback (requires C11)
-    #define align(n) _Alignas(n)
+    #undef typeof
+#endif
 
-    // C23 has the typeof operator by default
-
+#ifndef pure
     #define pure
     #define always_inline inline
 #endif
