@@ -13,6 +13,10 @@ static always_inline pure Mat4 Mat4_transpose_inline(const Mat4 m) {
     }};
 }
 
+pure Mat4 Mat4_transpose(const Mat4 m) {
+    return Mat4_transpose_inline(m);
+}
+
 pure Mat4 Mat4_identity() {
     return (Mat4) {{
         {{1, 0, 0, 0}},
@@ -64,19 +68,7 @@ pure Mat4 Mat4_yaw_pitch_roll(const float yaw, const float pitch, const float ro
 }
 
 pure Mat4 Mat4_inverse_yaw_pitch_roll(const float yaw, const float pitch, const float roll) {
-    const float cos_theta_y = cos(yaw);
-    const float cos_theta_p = cos(pitch);
-    const float cos_theta_r = cos(roll);
-    const float sin_theta_y = sin(yaw);
-    const float sin_theta_p = sin(pitch);
-    const float sin_theta_r = sin(roll);
-
-    return Mat4_transpose_inline((Mat4) {{
-        {{cos_theta_r*cos_theta_y-sin_theta_p*sin_theta_r*sin_theta_y, -cos_theta_p*sin_theta_r, cos_theta_r*sin_theta_y+sin_theta_p*sin_theta_r*cos_theta_y, 0}},
-        {{sin_theta_p*cos_theta_r*sin_theta_y+sin_theta_r*cos_theta_y, cos_theta_p*cos_theta_r,  sin_theta_r*sin_theta_y-sin_theta_p*cos_theta_r*cos_theta_y, 0}},
-        {{-cos_theta_p*sin_theta_y,                                    sin_theta_p,              cos_theta_p*cos_theta_y,                                     0}},
-        {{0,                                                           0,                        0,                                                           1}},
-     }});
+    return Mat4_transpose(Mat4_yaw_pitch_roll(yaw, pitch, roll));
 }
 
 pure Mat4 Mat4_yaw_pitch_roll_translate(const float yaw, const float pitch, const float roll, const Vec3 translation) {
