@@ -1,5 +1,5 @@
 #include <math.h>
-#include <time.h>
+#include <stdio.h>
 
 #include "draw.h"
 
@@ -86,14 +86,10 @@ void draw_frame(MainWindow *const w) {
 }
 
 static void updateUniformBuffer(const VulkanState *const s, UniformBufferObject *const ubo) {
-    const clock_t raw_time = clock();
+    const uint64_t raw_time = get_time_nanos();
 
-    if(raw_time < 0) {
-        error("Failed to get time");
-    }
-
-    // Get time in deciseconds
-    const uint64_t time = raw_time / ( CLOCKS_PER_SEC/100 );
+    // Get time in centiseconds
+    const uint64_t time = raw_time / 10000000;
 
     const double rotm = 1/2.0;
     const double model_yaw = fmodf(time / (rotm*100.0), 2.0*PI);

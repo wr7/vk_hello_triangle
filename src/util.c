@@ -1,3 +1,5 @@
+#define _POSIX_C_SOURCE 200809L
+
 #include "util.h"
 
 #include <stdint.h>
@@ -8,6 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdnoreturn.h>
+
+#include <time.h>
 
 OptionalU32 OptionalU32_empty(void) {
     return (OptionalU32) {.present = false};
@@ -56,3 +60,29 @@ uint32_t uint32_t_clamp(uint32_t val, uint32_t min, uint32_t max) {
 pure float radians(const float degrees) {
     return PI * degrees / 180.0;
 }
+
+#if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
+
+static uint64_t start_time;
+
+__attribute__( ( constructor ) )
+static void set_start_time() {
+    start_time = 0;
+    start_time = get_time_nanos();
+}
+
+/**
+ * Gets the time in nanoseconds
+ */
+uint64_t get_time_nanos() {
+    // POSIX only //
+    struct timespec ts;
+
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+
+    return (((uint64_t) ts.tv_sec) * 1e+9 + (uint64_t) ts.tv_nsec) - start_time;
+}
+
+#else
+#error "No get_time_nanos function implemented for platform"
+#endif

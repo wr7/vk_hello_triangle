@@ -114,15 +114,17 @@ static VkSurfaceFormatKHR selectSwapSurfaceFormat(const SwapchainSupportDetails 
 }
 
 static VkPresentModeKHR selectSwapPresentMode(const SwapchainSupportDetails *const details) {
-    for(size_t i = 0; i < details->num_present_modes; i++) {
-        VkPresentModeKHR mode = details->present_modes[i];
-        if(mode == VK_PRESENT_MODE_MAILBOX_KHR) {
-            return VK_PRESENT_MODE_MAILBOX_KHR;
-        }
-    }
+    // for(size_t i = 0; i < details->num_present_modes; i++) {
+    //     VkPresentModeKHR mode = details->present_modes[i];
+    //     if(mode == VK_PRESENT_MODE_MAILBOX_KHR) {
+    //         return VK_PRESENT_MODE_MAILBOX_KHR;
+    //     }
+    // }
+    UNUSED(details);
 
     // Fallback Value //
 
+    // Acts like "V-Sync"
     return VK_PRESENT_MODE_FIFO_KHR;
 }
 
