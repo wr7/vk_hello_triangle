@@ -16,7 +16,15 @@ bce = generator(bce_prog,
   arguments : ['@INPUT@', '@OUTPUT@'])
 
 vulkan = dependency('vulkan')
-glfw3 = dependency('glfw3')
+
+if build_machine.system() != 'windows'
+	glfw3 = dependency('glfw3')
+else
+	glfw3_inc = include_directories('windeps/glfw/include')
+	glfw3_lib = cc.find_library('glfw3', dirs: [meson.current_source_dir() + '/windeps/glfw/'])
+	glfw3 = declare_dependency(dependencies: [glfw3_lib], include_directories: glfw3_inc)
+endif
+
 libm = cc.find_library('m', required : false)
 
 shader_source_files = [

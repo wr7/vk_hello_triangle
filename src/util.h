@@ -93,4 +93,7 @@ noreturn void error(const char *const msg);
 uint32_t uint32_t_clamp(uint32_t min, uint32_t val, uint32_t max);
 pure float radians(const float degrees);
 
+/**
+ * Gets the time since the process started in nanoseconds
+ */
 uint64_t get_time_nanos();

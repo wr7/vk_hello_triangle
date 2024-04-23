@@ -1,5 +1,9 @@
 #define _POSIX_C_SOURCE 200809L
 
+#ifdef _MSC_VER
+    #include <windows.h>
+#endif
+
 #include "util.h"
 
 #include <stdint.h>
@@ -62,20 +66,20 @@ pure float radians(const float degrees) {
 }
 
 #if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
+// POSIX Implementation of get_time_nanos
 
 static uint64_t start_time;
 
 __attribute__( ( constructor ) )
-static void set_start_time() {
+static void _set_start_time() {
     start_time = 0;
     start_time = get_time_nanos();
 }
 
 /**
- * Gets the time in nanoseconds
+ * Gets the time since the process started in nanoseconds
  */
 uint64_t get_time_nanos() {
-    // POSIX only //
     struct timespec ts;
 
     clock_gettime(CLOCK_MONOTONIC, &ts);
@@ -83,6 +87,29 @@ uint64_t get_time_nanos() {
     return (((uint64_t) ts.tv_sec) * 1e+9 + (uint64_t) ts.tv_nsec) - start_time;
 }
 
+#elif defined (_MSC_VER)
+// Windows Implementation of get_time_nanos
+
+static uint64_t start_time;
+
+static int __cdecl _set_start_time(void) {
+    start_time = get_time_nanos();
+    return 0;
+}
+
+// Windows jank to run _set_start_time before main() //
+#pragma section(".CRT$XIB__SET_START_TIME", read)
+
+__declspec(allocate(".CRT$XIB__SET_START_TIME"))
+static int (* __cdecl _pset_start_time)(void) = _set_start_time;
+
+/**
+ * Gets the time since the process started in nanoseconds
+ */
+uint64_t get_time_nanos() {
+    uint64_t micros = GetTickCount64();
+    return micros * 1000;
+}
 #else
 #error "No get_time_nanos function implemented for platform"
 #endif
