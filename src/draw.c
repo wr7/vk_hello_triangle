@@ -35,7 +35,7 @@ void draw_frame(MainWindow *const w) {
         goto start;
     }
 
-    updateUniformBuffer(s,  &(*s->mapped_uniform_buffer_memory)[s->current_command_buffer_info]);
+    updateUniformBuffer(s,  s->mapped_uniform_buffer_memory[s->current_command_buffer_info]);
 
     handleVkError("Failed to acquire swapchain image", next_image_result);
 

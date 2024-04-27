@@ -93,6 +93,15 @@ noreturn void error(const char *const msg);
 uint32_t uint32_t_clamp(uint32_t min, uint32_t val, uint32_t max);
 pure float radians(const float degrees);
 
+/// Ceiling division
+#define cdiv(NUM, DEN) _Generic((NUM), \
+                 uint64_t: uint64_t_cdiv, \
+                 uint32_t: uint32_t_cdiv  \
+              )(NUM, DEN)
+
+pure uint64_t uint64_t_cdiv(uint64_t num, uint64_t den);
+pure uint32_t uint32_t_cdiv(uint32_t num, uint32_t den);
+
 /**
  * Gets the time since the process started in nanoseconds
  */

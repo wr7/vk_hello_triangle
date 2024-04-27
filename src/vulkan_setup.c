@@ -39,6 +39,7 @@ VulkanState VulkanState_create(GLFWwindow *window) {
     s.window_surface = createWindowSurface(s.instance, window);
 
     s.graphics_card = selectGraphicsCard(s.instance, s.window_surface, &s.indices);
+    vkGetPhysicalDeviceProperties(s.graphics_card, &s.gpu_properties);
     s.device = createLogicalDevice(s.graphics_card, &s.indices);
     s.queues = Queues_create(s.device, &s.indices);
 

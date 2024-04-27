@@ -67,10 +67,13 @@ void createDescriptorSets(const VulkanState *const s, VkDescriptorSet (*const o_
         vkAllocateDescriptorSets(s->device, &alloc_info, &(*o_sets)[0])
     );
 
+    const VkDeviceSize MIN_UBO_ALIGNMENT = s->gpu_properties.limits.minUniformBufferOffsetAlignment;
+    const VkDeviceSize UBO_OFFSET = cdiv(sizeof(UniformBufferObject), MIN_UBO_ALIGNMENT) * MIN_UBO_ALIGNMENT;
+
     for(VkDeviceSize i = 0; i < ARRAY_LENGTH(*o_sets); i++) {
         VkDescriptorBufferInfo buffer_info = {
             .buffer = s->uniform_buffer,
-            .offset = i * sizeof(UniformBufferObject),
+            .offset = i * UBO_OFFSET,
             .range = sizeof(UniformBufferObject),
         };
 

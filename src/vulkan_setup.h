@@ -22,6 +22,7 @@ typedef struct {
     VkInstance instance;
     VkSurfaceKHR window_surface;
     VkPhysicalDevice graphics_card;
+    VkPhysicalDeviceProperties gpu_properties;
     VkDevice device;
     VkSwapchainKHR swapchain;
 
@@ -47,7 +48,7 @@ typedef struct {
     VkBuffer uniform_buffer;
     VkDeviceMemory uniform_buffer_memory;
 
-    UniformBufferObject (*mapped_uniform_buffer_memory)[FRAMES_IN_FLIGHT];
+    UniformBufferObject *mapped_uniform_buffer_memory[FRAMES_IN_FLIGHT];
 
     // Swapchain stuff //
 

@@ -36,8 +36,14 @@ VkBuffer createVertexAndIndexBuffer(const VulkanState *const s, VkDeviceMemory *
 
 // TODO: do not use VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 // TODO: UMA support
-VkBuffer createUniformBuffer(const VulkanState *const s, VkDeviceMemory *const o_buffer_memory, UniformBufferObject (**const o_mapped_memory)[FRAMES_IN_FLIGHT]) {
-    const VkDeviceSize BUFFER_SIZE = sizeof(**o_mapped_memory);
+VkBuffer createUniformBuffer(const VulkanState *const s, VkDeviceMemory *const o_buffer_memory, UniformBufferObject *(*const o_mapped_memory)[FRAMES_IN_FLIGHT]) {
+    const VkDeviceSize MIN_ALIGNMENT = s->gpu_properties.limits.minUniformBufferOffsetAlignment;
+
+    const VkDeviceSize NUM_UBOS = ARRAY_LENGTH(*o_mapped_memory);
+
+    const VkDeviceSize UBO_OFFSET = cdiv(sizeof(UniformBufferObject), MIN_ALIGNMENT) * MIN_ALIGNMENT;
+    const VkDeviceSize BUFFER_SIZE = cdiv(sizeof(UniformBufferObject) * NUM_UBOS, MIN_ALIGNMENT) * MIN_ALIGNMENT;
+
 
     VkBuffer uniform_buffer = createBuffer(s, 
         BUFFER_SIZE, 
@@ -46,7 +52,16 @@ VkBuffer createUniformBuffer(const VulkanState *const s, VkDeviceMemory *const o
         o_buffer_memory
     );
 
-    vkMapMemory(s->device, *o_buffer_memory, 0, BUFFER_SIZE, 0, (void **const) o_mapped_memory);
+    void *memory;
+
+    handleVkError("Failed to allocate Uniform Buffer",
+        vkMapMemory(s->device, *o_buffer_memory, 0, BUFFER_SIZE, 0, &memory)
+    );
+
+    for(VkDeviceSize i = 0; i < ARRAY_LENGTH(*o_mapped_memory); i++) {
+        uint8_t *ubo_ptr = ((uint8_t *) memory) + i*UBO_OFFSET;
+        (*o_mapped_memory)[i] = (UniformBufferObject *) ubo_ptr;
+    }
 
     return uniform_buffer;
 }
