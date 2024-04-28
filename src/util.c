@@ -63,12 +63,12 @@ uint32_t uint32_t_clamp(uint32_t val, uint32_t min, uint32_t max) {
 
 /// Ceiling division
 pure uint32_t uint32_t_cdiv(uint32_t num, uint32_t den) {
-    return (num / den) + (num % den != 0);
+    return (num + den - 1) / den;
 }
 
 /// Ceiling division
 pure uint64_t uint64_t_cdiv(uint64_t num, uint64_t den) {
-    return (num / den) + (num % den != 0);
+    return (num + den - 1) / den;
 }
 
 pure float radians(const float degrees) {
