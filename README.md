@@ -5,6 +5,9 @@ My current implementation of https://vulkan-tutorial.com/Introduction. It has a 
  - Uses the build system (Meson) to automatically compile shaders, convert them into C headers, and embed them into the executable/binary
    - The tutorial instead uses shell scripts to compile the shaders and reads the shaders from external files at runtime
  - Uses a shared vertex/index buffer
+ - VSync instead of just generating thousands of frames per second
+
+![Screenshot from 2024-04-27 20-30-40](https://github.com/wr7/vk_hello_triangle/assets/53203261/b44763f7-5db9-4e90-a222-e8a23c0f0fe3)
 
 ## Compiling on Linux using Nix
 ```bash
