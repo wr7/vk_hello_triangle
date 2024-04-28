@@ -1,3 +1,11 @@
+
+My current implementation of https://vulkan-tutorial.com/Introduction. It has a few noticeable differences
+ - Written in C and not C++
+ - Does not use an external linear algebra library
+ - Uses the build system (Meson) to automatically compile shaders, convert them into C headers, and embed them into the executable/binary
+   - The tutorial instead uses shell scripts to compile the shaders and reads the shaders from external files at runtime
+ - Uses a shared vertex/index buffer
+
 ## Compiling on Linux using Nix
 ```bash
 nix-shell
@@ -5,8 +13,7 @@ source envsetup.sh
 ```
 The program can be compiled by running `b`, can be run with `r`, and can be run in renderdoc with `re`.
 
-## Compiling on windows
-
+## Compiling on Windows
 Download and install Visual Studio Community from https://visualstudio.microsoft.com/downloads/
 
 Download glfw from https://www.glfw.org/download
