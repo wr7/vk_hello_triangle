@@ -103,6 +103,7 @@ uint64_t get_time_nanos() {
 static uint64_t start_time;
 
 static int __cdecl _set_start_time(void) {
+    start_time = 0;
     start_time = get_time_nanos();
     return 0;
 }
@@ -111,14 +112,19 @@ static int __cdecl _set_start_time(void) {
 #pragma section(".CRT$XIB__SET_START_TIME", read)
 
 __declspec(allocate(".CRT$XIB__SET_START_TIME"))
-static int (* __cdecl _pset_start_time)(void) = _set_start_time;
+int (* __cdecl _pset_start_time)(void) = _set_start_time;
 
 /**
  * Gets the time since the process started in nanoseconds
  */
 uint64_t get_time_nanos() {
+    /*
+     * TODO: GetTickCount64 has a resolution of "10 milliseconds to 16 milliseconds" on average compared to 
+     * clock_gettime which typically has a resolution measured in microseconds
+    */
+
     uint64_t micros = GetTickCount64();
-    return micros * 1000;
+    return (micros * 1000000) - start_time;
 }
 #else
 #error "No get_time_nanos function implemented for platform"
