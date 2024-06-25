@@ -4,16 +4,7 @@ project('vulkanhello', 'c',
 
 cc = meson.get_compiler('c')
 
-glslc_prog = find_program('glslc')
-bce_prog = executable('bce', 'deps/bce.c')
-
-glslc = generator(glslc_prog,
-  output  : '@PLAINNAME@.spv',
-  arguments : ['@INPUT@', '-o', '@OUTPUT@'])
-
-bce = generator(bce_prog,
-  output  : '@BASENAME@.h',
-  arguments : ['@INPUT@', '@OUTPUT@'])
+# Dependencies
 
 vulkan = dependency('vulkan')
 
@@ -26,6 +17,35 @@ else
 endif
 
 libm = cc.find_library('m', required : false)
+
+runtime_deps = [vulkan, glfw3, libm]
+
+ffmpeg_deps = [
+  dependency('libswscale'),
+  dependency('libavutil'),
+  dependency('libavformat'),
+  dependency('libavcodec'),
+]
+
+# Compile time processing programs
+
+glslc_prog = find_program('glslc')
+bce_prog = executable('bce', 'deps/bce.c', install: false)
+image_decoder_prog = executable('image_decoder', 'comptime/image_decoder.c', dependencies: ffmpeg_deps, install: false)
+
+glslc = generator(glslc_prog,
+  output  : '@PLAINNAME@.spv',
+  arguments : ['@INPUT@', '-o', '@OUTPUT@'])
+
+bce = generator(bce_prog,
+  output  : '@BASENAME@.h',
+  arguments : ['@INPUT@', '@OUTPUT@'])
+
+image_decoder = generator(image_decoder_prog,
+  output  : '@PLAINNAME@.h',
+  arguments : ['@INPUT@', '@OUTPUT@'])
+
+# Sources
 
 shader_source_files = [
   'src/shader.vert',
@@ -59,4 +79,4 @@ shader_headers = bce.process(compiled_shaders)
 include_directories = include_directories('src')
 
 exe = executable('vulkanhello', project_source_files + shader_headers,
-  install : false, include_directories : include_directories, dependencies : [vulkan, glfw3, libm])
+  install : false, include_directories : include_directories, dependencies : runtime_deps)
