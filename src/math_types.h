@@ -56,7 +56,7 @@ static const VkVertexInputAttributeDescription Vertex_ATTRIBUTE_DESCRIPTIONS[] =
 
 pure Mat4 Mat4_transpose(const Mat4 m);
 
-pure Mat4 Mat4_identity();
+pure Mat4 Mat4_identity(void);
 
 pure Vec4 Mat4_apply(const Mat4 matrix, const Vec4 vector);
 

@@ -17,7 +17,7 @@ pure Mat4 Mat4_transpose(const Mat4 m) {
     return Mat4_transpose_inline(m);
 }
 
-pure Mat4 Mat4_identity() {
+pure Mat4 Mat4_identity(void) {
     return (Mat4) {{
         {{1, 0, 0, 0}},
         {{0, 1, 0, 0}},
