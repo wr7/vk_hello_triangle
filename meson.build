@@ -5,7 +5,7 @@ project('vulkanhello', 'c',
 cc = meson.get_compiler('c')
 
 glslc_prog = find_program('glslc')
-bce_prog = executable('bce', 'bce.c')
+bce_prog = executable('bce', 'deps/bce.c')
 
 glslc = generator(glslc_prog,
   output  : '@PLAINNAME@.spv',
