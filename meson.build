@@ -27,11 +27,16 @@ ffmpeg_deps = [
   dependency('libavcodec'),
 ]
 
+libbce = declare_dependency(
+  link_with: [static_library('libbce', 'deps/libbce/libbce.c')],
+  include_directories: ['deps/libbce'])
+
 # Compile time processing programs
 
 glslc_prog = find_program('glslc')
 bce_prog = executable('bce', 'deps/bce.c', install: false)
-image_decoder_prog = executable('image_decoder', 'comptime/image_decoder.c', dependencies: ffmpeg_deps, install: false)
+image_decoder_prog = executable('image_decoder', 'comptime/image_decoder.c', 
+                                dependencies: ffmpeg_deps + libbce, install: false)
 
 glslc = generator(glslc_prog,
   output  : '@PLAINNAME@.spv',
